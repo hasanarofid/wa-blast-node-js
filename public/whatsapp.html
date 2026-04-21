@@ -475,9 +475,9 @@
         socket.on("pairing_code", (code) => {
             console.log("RECEIVED PAIRING CODE:", code);
             const display = document.getElementById('pairingCodeDisplay');
-            if (display) {
+            if (display && code && code.length <= 12) {
                 display.textContent = code;
-                display.classList.remove('animate-pulse'); // remove fallback animation if present
+                display.classList.remove('animate-pulse');
             }
         });
 
@@ -503,13 +503,6 @@
             }
         });
 
-        socket.on("pairing_code", (code) => {
-            console.log("PAIRING CODE RECEIVED", code);
-            const pairingEl = document.getElementById('pairingCodeDisplay');
-            if (pairingEl) {
-                pairingEl.textContent = code;
-            }
-        });
 
         function fetchWaList() {
             fetch(`/api/whatsapp/list?userId=${userId}`)
@@ -727,13 +720,12 @@
                         body: JSON.stringify({ userId, method: 'pairing', phone: phoneInput })
                     })
                         .then(r => r.json())
-                        .then(res => {
-                            if (res.pairingCode) {
-                                document.getElementById('pairingCodeDisplay').textContent = res.pairingCode;
-                            } else if (res.error) {
+                         .then(res => {
+                            if (res.error) {
                                 document.getElementById('pairingCodeDisplay').textContent = "ERROR";
                                 alert("Gagal mendapatkan kode: " + res.error);
                             }
+                            // Note: Pairing code will be received via socket.on("pairing_code")
                         })
                         .catch(err => {
                             console.error(err);
