@@ -41,7 +41,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         version,
         logger,
         printQRInTerminal: false,
-        browser: ["Ubuntu", "Chrome", "20.0.04"],
+        browser: ["Windows", "Chrome", "11.0.0.1"],
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, logger),
@@ -55,8 +55,9 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
     let pairingCodeResolved = null;
 
     if (pairingNumber && !sock.authState.creds.registered) {
-        // Delay slightly to ensure socket is ready
-        await delay(1500);
+        console.log(`[BAILEYS] Requesting pairing code for ${pairingNumber} using browser: Windows/Chrome`);
+        // Delay 3 seconds to ensure socket is fully ready
+        await delay(3000);
         try {
             const cleanNumber = pairingNumber.replace(/[^0-9]/g, '');
             pairingCodeResolved = await sock.requestPairingCode(cleanNumber);
