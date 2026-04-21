@@ -36,11 +36,12 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         version,
         logger,
         printQRInTerminal: false,
-        browser: ["Chrome", "macOS", "110.0.0.0"],
+        browser: ["Windows", "Chrome", "20.0.04"], // Evolution API standard
         markOnline: true,
         syncFullHistory: false, // For speed like Evolution API
         connectTimeoutMs: 60000,
         defaultQueryTimeoutMs: 0,
+        keepAliveIntervalMs: 30000,
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, logger),
@@ -103,14 +104,19 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
     // Only request pairing code if explicitly provided (first time)
     if (pairingNumber && !sock.authState.creds.registered) {
         console.log(`[BAILEYS] Requesting fresh pairing code for ${pairingNumber}`);
-        await delay(3000);
-        try {
-            const cleanNumber = pairingNumber.replace(/[^0-9]/g, '');
-            pairingCodeResolved = await sock.requestPairingCode(cleanNumber);
-            console.log(`[BAILEYS] Pairing code for ${cleanNumber}: ${pairingCodeResolved}`);
-        } catch (err) {
-            console.error(`[BAILEYS] Failed to request pairing code:`, err.message);
-        }
+        setTimeout(async () => {
+            try {
+                // Ensure socket is still healthy
+                if (!sock.authState.creds.registered) {
+                    const code = await sock.requestPairingCode(pairingNumber);
+                    console.log(`[BAILEYS] Pairing code for ${pairingNumber}: ${code}`);
+                    if (io) io.to(userId).emit("pairing_code", code);
+                }
+            } catch (err) {
+                console.error(`[BAILEYS] Pairing Request Error:`, err.message);
+                if (io) io.to(userId).emit("pairing_error", err.message);
+            }
+        }, 6000); // 6s delay for stability
     }
 
     return pairingCodeResolved;
