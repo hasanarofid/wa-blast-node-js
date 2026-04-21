@@ -13,24 +13,41 @@ const instances = {}; // cache of instance status
 
 async function createInstance(sessionId, userId, io, pairingNumber = null) {
     try {
-        // Wait a bit to ensure DNS is ready if containers just started
-        await new Promise(r => setTimeout(r, 2000));
+        console.log(`[EVO] Initializing instance for ${sessionId}...`);
         
-        console.log(`[EVO] Creating instance for ${sessionId}...`);
-        
-        // 1. Create Instance
-        const createRes = await axios.post(`${EVO_URL}/instance/create`, {
-            instanceName: sessionId,
-            token: EVO_KEY,
-            number: pairingNumber,
-            pairingCode: !!pairingNumber
-        }, {
-            headers: { 'apikey': EVO_KEY }
-        });
+        // 1. Attempt to create (will fail if exists, which is fine)
+        try {
+            await axios.post(`${EVO_URL}/instance/create`, {
+                instanceName: sessionId,
+                token: EVO_KEY,
+                number: pairingNumber,
+                pairingCode: !!pairingNumber
+            }, { headers: { 'apikey': EVO_KEY } });
+            console.log(`[EVO] Instance ${sessionId} created.`);
+        } catch (e) {
+            console.log(`[EVO] Instance ${sessionId} already exists or create skipped.`);
+        }
 
-        console.log(`[EVO] Instance ${sessionId} created.`);
+        // 2. Immediate Initial Check
+        const fetchConnect = async () => {
+            try {
+                const res = await axios.get(`${EVO_URL}/instance/connect/${sessionId}`, {
+                    headers: { 'apikey': EVO_KEY }
+                });
+                if (res.data && res.data.base64) {
+                    if (io) io.to(userId).emit("qr", res.data.base64);
+                }
+                if (pairingNumber && res.data && res.data.code) {
+                     if (io) io.to(userId).emit("pairing_code", res.data.code);
+                     return true;
+                }
+            } catch (e) {}
+            return false;
+        };
 
-        // 2. Poll for QR or Pairing Code
+        await fetchConnect();
+
+        // 3. Robust Polling (Every 1s for first 10s, then 2s)
         if (pairingNumber) {
             let pairAttempts = 0;
             const pairInterval = setInterval(async () => {
@@ -40,46 +57,34 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                         headers: { 'apikey': EVO_KEY }
                     });
                     if (pairRes.data && pairRes.data.code) {
-                        console.log(`[EVO] Pairing code for ${pairingNumber}: ${pairRes.data.code}`);
                         if (io) io.to(userId).emit("pairing_code", pairRes.data.code);
                         clearInterval(pairInterval);
                     }
                 } catch (e) {
-                    if (pairAttempts > 15) clearInterval(pairInterval);
+                    if (pairAttempts > 60) clearInterval(pairInterval);
                 }
-            }, 2000);
+            }, 1000);
         } else {
-            // Pulse QR every few seconds until connected
             const qrInterval = setInterval(async () => {
                 try {
-                    const connectRes = await axios.get(`${EVO_URL}/instance/connect/${sessionId}`, {
-                        headers: { 'apikey': EVO_KEY }
-                    });
-                    
-                    if (connectRes.data && connectRes.data.base64) {
-                        if (io) io.to(userId).emit("qr", connectRes.data.base64);
-                    }
-                    
-                    // Check status
+                    await fetchConnect();
                     const stateRes = await axios.get(`${EVO_URL}/instance/connectionState/${sessionId}`, {
                         headers: { 'apikey': EVO_KEY }
                     });
-                    
-                    if (stateRes.data && stateRes.data.instance && stateRes.data.instance.state === 'open') {
+                    if (stateRes.data?.instance?.state === 'open') {
                         clearInterval(qrInterval);
                         if (io) io.to(userId).emit("status", "connected");
                         if (io) io.to(userId).emit("wa_list_update");
                     }
                 } catch (e) {
-                    console.log("[EVO] QR Polling stopped or instance not ready.");
                     clearInterval(qrInterval);
                 }
-            }, 2000);
+            }, 1500);
         }
 
         return { success: true };
     } catch (error) {
-        console.error('[EVO] Error creating instance:', error.response?.data || error.message);
+        console.error('[EVO] Critical Error:', error.message);
         return { success: false, error: error.message };
     }
 }
