@@ -27,7 +27,7 @@ if (!fs.existsSync(SESSIONS_DIR)) fs.mkdirSync(SESSIONS_DIR, { recursive: true }
 /**
  * Initialize a Baileys session
  */
-async function createInstance(sessionId, userId, io) {
+async function createInstance(sessionId, userId, io, pairingNumber = null) {
     if (sessions[sessionId] && sessionStatus[sessionId] === 'connected') {
         return sessions[sessionId].socket;
     }
@@ -35,7 +35,7 @@ async function createInstance(sessionId, userId, io) {
     console.log(`[BAILEYS] Initializing session: ${sessionId} for user: ${userId}`);
     const sessionPath = path.join(SESSIONS_DIR, sessionId);
     const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-    const { version, isLatest } = await fetchLatestBaileysVersion();
+    const { version } = await fetchLatestBaileysVersion();
 
     const sock = makeWASocket({
         version,
@@ -50,6 +50,20 @@ async function createInstance(sessionId, userId, io) {
 
     sessions[sessionId] = { socket: sock, userId, status: 'pending' };
     sessionStatus[sessionId] = 'pending';
+
+    let pairingCodeResolved = null;
+
+    if (pairingNumber && !sock.authState.creds.registered) {
+        // Delay slightly to ensure socket is ready
+        await delay(1500);
+        try {
+            const cleanNumber = pairingNumber.replace(/[^0-9]/g, '');
+            pairingCodeResolved = await sock.requestPairingCode(cleanNumber);
+            console.log(`[BAILEYS] Pairing code for ${cleanNumber}: ${pairingCodeResolved}`);
+        } catch (err) {
+            console.error(`[BAILEYS] Failed to request pairing code:`, err.message);
+        }
+    }
 
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update;
@@ -99,7 +113,7 @@ async function createInstance(sessionId, userId, io) {
 
     sock.ev.on('creds.update', saveCreds);
 
-    return sock;
+    return pairingCodeResolved;
 }
 
 /**
@@ -111,14 +125,8 @@ async function forceNewQr(sessionId, userId, io, method = 'qr', phone = '') {
         await disconnectSession(sessionId);
     }
 
-    if (method === 'pairing' && phone) {
-        // Implementation for pairing code if needed
-        // Baileys handle this via sock.requestPairingCode(phone)
-        // But for now we stick to QR as primary
-    }
-
-    await createInstance(sessionId, userId, io);
-    return { success: true };
+    const pairingCode = await createInstance(sessionId, userId, io, method === 'pairing' ? phone : null);
+    return { success: true, pairingCode };
 }
 
 /**
