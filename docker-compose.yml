@@ -7,7 +7,7 @@ services:
     restart: always
 
   evolution:
-    image: atendare/evolution-api:latest
+    image: evoapicloud/evolution-api:latest
     container_name: setorwa-evolution
     restart: always
     environment:
