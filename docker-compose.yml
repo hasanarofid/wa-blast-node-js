@@ -26,6 +26,7 @@ services:
       - CONFIG_SESSION_PHONE_CLIENT=SetorwaApp
       - CONFIG_SESSION_PHONE_NAME=Chrome
       - DATABASE_ENABLED=false
+      - DATABASE_PROVIDER=postgresql
     depends_on:
       - redis
     networks:
