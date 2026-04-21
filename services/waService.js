@@ -32,7 +32,6 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         return sessions[sessionId].socket;
     }
 
-    console.log(`[BAILEYS] Initializing session: ${sessionId} for user: ${userId}`);
     const sessionPath = path.join(SESSIONS_DIR, sessionId);
     const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
     const { version } = await fetchLatestBaileysVersion();
@@ -41,7 +40,8 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         version,
         logger,
         printQRInTerminal: false,
-        browser: ["Chrome (Linux)", "Chrome", "110.0.0.0"],
+        browser: ["Ubuntu", "Chrome", "20.0.04"],
+        markOnline: false,
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, logger),
@@ -58,51 +58,36 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         const { connection, lastDisconnect, qr } = update;
         console.log(`[BAILEYS] Update for ${sessionId}: connection=${connection}, qr=${qr ? 'yes' : 'no'}, status=${sessionStatus[sessionId]}`);
         
-        // If we are in pairing mode, DO NOT process QR events to avoid interference
-        if (qr) {
-            if (!pairingNumber) {
-                const QRCode = require('qrcode');
-                QRCode.toDataURL(qr, (err, url) => {
-                    if (!err && io) {
-                        io.to(userId).emit("qr", url);
-                    }
-                });
-            } else {
-                console.log(`[BAILEYS] Suppressing QR emit during pairing mode for ${sessionId}`);
-            }
+        if (qr && !pairingNumber) {
+            const QRCode = require('qrcode');
+            QRCode.toDataURL(qr, (err, url) => {
+                if (!err && io) {
+                    io.to(userId).emit("qr", url);
+                }
+            });
         }
 
         if (connection === 'close') {
             const isLoggedOut = (lastDisconnect?.error)?.output?.statusCode === DisconnectReason.loggedOut;
-            const isPending = sessionStatus[sessionId] === 'pending';
+            const shouldReconnect = !isLoggedOut;
             
-            // CRITICAL: If pending (pairing), DO NOT reconnect automatically to avoid handshake loops
-            const shouldReconnect = !isLoggedOut && !isPending;
-            
-            console.log(`[BAILEYS] Connection closed for ${sessionId}. Pending: ${isPending}, LoggedOut: ${isLoggedOut}, Reconnecting: ${shouldReconnect}`);
+            console.log(`[BAILEYS] Connection closed for ${sessionId}. Reconnecting: ${shouldReconnect}`);
             
             if (shouldReconnect) {
+                // IMPORTANT: Reconnect WITHOUT pairingNumber to avoid loop
                 createInstance(sessionId, userId, io);
             } else {
-                if (isPending) {
-                    console.log(`[BAILEYS] Pairing connection closed for ${sessionId}. User may need to retry if linking wasn't finished.`);
-                }
                 sessionStatus[sessionId] = 'disconnected';
                 if (io) {
                     io.to(userId).emit("status", "disconnected");
                     io.to(userId).emit("wa_list_update");
                 }
-                // Permanently disconnected
                 delete sessions[sessionId];
                 delete sessionStatus[sessionId];
-                delete qrs[sessionId];
-                fs.rmSync(sessionPath, { recursive: true, force: true });
             }
         } else if (connection === 'open') {
             console.log(`[BAILEYS] Connection opened for session: ${sessionId}`);
             sessionStatus[sessionId] = 'connected';
-            const phone = sock.user.id.split(':')[0];
-            // We can store the phone in a map if needed
             if (io) {
                 io.to(userId).emit("status", "connected");
                 io.to(userId).emit("wa_list_update");
@@ -112,9 +97,9 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
     let pairingCodeResolved = null;
 
+    // Only request pairing code if explicitly provided (first time)
     if (pairingNumber && !sock.authState.creds.registered) {
-        console.log(`[BAILEYS] Requesting pairing code for ${pairingNumber} using browser: Chrome/Linux`);
-        // Delay to ensure socket is fully ready
+        console.log(`[BAILEYS] Requesting fresh pairing code for ${pairingNumber}`);
         await delay(3000);
         try {
             const cleanNumber = pairingNumber.replace(/[^0-9]/g, '');
