@@ -28,21 +28,15 @@ if (!fs.existsSync(SESSIONS_DIR)) fs.mkdirSync(SESSIONS_DIR, { recursive: true }
  * Initialize a Baileys session
  */
 async function createInstance(sessionId, userId, io, pairingNumber = null) {
-    if (sessions[sessionId] && sessionStatus[sessionId] === 'connected') {
-        return sessions[sessionId].socket;
-    }
-
     const sessionPath = path.join(SESSIONS_DIR, sessionId);
     const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-    
-    // Stable legacy version lock for pairing success
-    const version = [2, 2413, 1];
+    const { version } = await fetchLatestBaileysVersion();
 
     const sock = makeWASocket({
         version,
         logger,
         printQRInTerminal: false,
-        browser: ["Chrome (Linux)", "Chrome", "110.0.0.0"],
+        browser: ["Chrome", "macOS", "110.0.0.0"],
         markOnline: true,
         syncFullHistory: false, // For speed like Evolution API
         connectTimeoutMs: 60000,
@@ -80,8 +74,11 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
             console.log(`[BAILEYS] Connection closed for ${sessionId}. Reconnecting: ${shouldReconnect}`);
             
             if (shouldReconnect) {
-                // IMPORTANT: Reconnect WITHOUT pairingNumber to avoid loop
-                createInstance(sessionId, userId, io);
+                // IMPORTANT: Use delay for pending sessions to avoid spamming server
+                const delay = sessionStatus[sessionId] === 'pending' ? 5000 : 0;
+                setTimeout(() => {
+                    createInstance(sessionId, userId, io);
+                }, delay);
             } else {
                 sessionStatus[sessionId] = 'disconnected';
                 if (io) {
@@ -148,8 +145,12 @@ async function forceNewQr(sessionId, userId, io, method = 'qr', phone = '') {
 async function disconnectSession(sessionId) {
     if (sessions[sessionId]) {
         try {
-            sessions[sessionId].socket.logout();
-            sessions[sessionId].socket.end();
+            // Defensive cleanup to prevent crash on closing/connecting socket
+            const s = sessions[sessionId].socket;
+            if (s.ws?.readyState === 1) { // OPEN
+                await s.logout().catch(() => {});
+            }
+            s.end();
         } catch (e) {}
         delete sessions[sessionId];
         delete sessionStatus[sessionId];
