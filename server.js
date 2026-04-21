@@ -319,22 +319,21 @@ app.post('/connect', async (req, res) => {
     }
 
     try {
-        const result = await forceNewQr(sid, userId, ioInstance, method, phone);
-        if (result.error) {
-            return res.status(500).json({ error: result.error });
-        }
-        res.json({ message: "Connecting...", sessionId: sid, ...result });
+        const { createInstance } = require('./services/waService');
+        await createInstance(sid, userId, ioInstance, method === 'pairing' ? phone : null);
+        res.json({ message: "Connecting via Evolution API...", sessionId: sid });
     } catch (err) {
         console.error("Connect error:", err.message);
         res.status(500).json({ error: err.message });
     }
 });
 
-app.get('/api/whatsapp/list', (req, res) => {
+app.get('/api/whatsapp/list', async (req, res) => {
     const { userId } = req.query;
     if (!userId) return res.status(400).json({ success: false, message: 'Username diperlukan' });
-    const { getUserSessionDetails } = require('./services/waService');
-    res.json({ success: true, data: getUserSessionDetails(userId) });
+    const { getWaList } = require('./services/waService');
+    const list = await getWaList(userId);
+    res.json({ success: true, data: list });
 });
 
 app.post('/api/whatsapp/disconnect', async (req, res) => {
