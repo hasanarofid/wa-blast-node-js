@@ -32,8 +32,9 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
         // 2. Poll for QR or Pairing Code
         if (pairingNumber) {
-            // Pairing code is usually returned in create response for some versions, or via separate GET
-            setTimeout(async () => {
+            let pairAttempts = 0;
+            const pairInterval = setInterval(async () => {
+                pairAttempts++;
                 try {
                     const pairRes = await axios.get(`${EVO_URL}/instance/pairingCode/${sessionId}?number=${pairingNumber}`, {
                         headers: { 'apikey': EVO_KEY }
@@ -41,11 +42,12 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                     if (pairRes.data && pairRes.data.code) {
                         console.log(`[EVO] Pairing code for ${pairingNumber}: ${pairRes.data.code}`);
                         if (io) io.to(userId).emit("pairing_code", pairRes.data.code);
+                        clearInterval(pairInterval);
                     }
                 } catch (e) {
-                    console.error("[EVO] Pairing error:", e.message);
+                    if (pairAttempts > 15) clearInterval(pairInterval);
                 }
-            }, 3000);
+            }, 2000);
         } else {
             // Pulse QR every few seconds until connected
             const qrInterval = setInterval(async () => {
@@ -72,7 +74,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                     console.log("[EVO] QR Polling stopped or instance not ready.");
                     clearInterval(qrInterval);
                 }
-            }, 5000);
+            }, 2000);
         }
 
         return { success: true };

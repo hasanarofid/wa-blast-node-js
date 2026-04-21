@@ -492,6 +492,25 @@
             fetchWaList();
         });
 
+        socket.on("qr", (data) => {
+            console.log("QR RECEIVED", data);
+            const qrImgEl = document.getElementById("qrImage");
+            const loadingEl = document.getElementById("qrLoadingState");
+            if (qrImgEl && data) {
+                qrImgEl.src = data;
+                qrImgEl.classList.remove("hidden");
+                if (loadingEl) loadingEl.classList.add("hidden");
+            }
+        });
+
+        socket.on("pairing_code", (code) => {
+            console.log("PAIRING CODE RECEIVED", code);
+            const pairingEl = document.getElementById('pairingCodeDisplay');
+            if (pairingEl) {
+                pairingEl.textContent = code;
+            }
+        });
+
         function fetchWaList() {
             fetch(`/api/whatsapp/list?userId=${userId}`)
                 .then(r => r.json())
@@ -580,7 +599,7 @@
         fetchWaList();
         // ── Fallback polling: refresh status setiap 5 detik ──────────────────
         // Ini memastikan status update meski socket.io event gagal karena server sibuk
-        setInterval(fetchWaList, 5000);
+        setInterval(fetchWaList, 2000);
 
         socket.on("blast_progress", (data) => {
             console.log("BLAST PROGRESS", data);
