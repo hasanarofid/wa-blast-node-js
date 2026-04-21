@@ -1,100 +1,95 @@
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
 
 const EVO_URL = process.env.EVO_URL || 'http://evolution:8080';
 const EVO_KEY = process.env.EVO_KEY || 'setorwasecret123';
 
 /**
- * Evolution API Service (v16.22 - Fixed Pairing POST endpoint)
+ * Evolution API Service (v16.23 - Use /instance/connect for both QR and Pairing)
+ * /instance/connect returns: { pairingCode, code, base64, count }
  */
 
 async function createInstance(sessionId, userId, io, pairingNumber = null) {
     try {
-        console.log(`[EVO] Starting fresh instance for ${sessionId}...`);
-        
+        console.log(`[EVO] Starting fresh instance for ${sessionId} (pairingNumber: ${pairingNumber})...`);
+
         // 1. Force cleanup existing
         try {
             await axios.delete(`${EVO_URL}/instance/logout/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
             await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
-            console.log(`[EVO] Old instance cleaned.`);
-        } catch (e) { /* no old instance */ }
+        } catch (e) {}
 
         // 2. Create Fresh Instance
         const payload = { instanceName: sessionId, token: EVO_KEY };
         if (pairingNumber) {
-            payload.number = pairingNumber;
+            payload.number = String(pairingNumber);
             payload.pairingCode = true;
         }
 
         const createRes = await axios.post(`${EVO_URL}/instance/create`, payload, {
             headers: { 'apikey': EVO_KEY }
         });
-        console.log(`[EVO] Instance created:`, JSON.stringify(createRes.data));
+        console.log(`[EVO] Instance created ok`);
 
         // 3. Wait for WA engine handshake
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise(r => setTimeout(r, 3000));
 
-        if (pairingNumber) {
-            // ---- PAIRING CODE MODE ----
-            // Evolution API v1.8.2: Uses POST /instance/pairingCode/{instanceName}
-            let attempts = 0;
-            const pairInterval = setInterval(async () => {
-                attempts++;
-                try {
-                    const pairRes = await axios.post(
-                        `${EVO_URL}/instance/pairingCode/${sessionId}`,
-                        { number: pairingNumber },
-                        { headers: { 'apikey': EVO_KEY } }
-                    );
-                    console.log(`[EVO] Pairing attempt ${attempts} response:`, JSON.stringify(pairRes.data));
+        // 4. Poll /instance/connect which returns: { pairingCode, code, base64, count }
+        let attempts = 0;
+        let codeEmitted = false;
 
-                    const code = pairRes.data?.code || pairRes.data?.pairingCode;
-                    if (code && typeof code === 'string' && code.length >= 6 && code.length <= 20) {
-                        console.log(`[EVO] Got pairing code: ${code}`);
-                        if (io) io.to(userId).emit("pairing_code", code);
-                        clearInterval(pairInterval);
+        const pollInterval = setInterval(async () => {
+            attempts++;
+            try {
+                const res = await axios.get(`${EVO_URL}/instance/connect/${sessionId}`, {
+                    headers: { 'apikey': EVO_KEY }
+                });
+
+                const data = res.data;
+                console.log(`[EVO] connect attempt ${attempts} - keys:`, Object.keys(data || {}));
+                console.log(`[EVO] code=${data?.code}, pairingCode=${data?.pairingCode}, hasBase64=${!!data?.base64}`);
+
+                if (pairingNumber) {
+                    // In pairing mode - look for the 8-char pairing code
+                    const rawCode = data?.code || data?.pairingCode;
+                    if (rawCode && typeof rawCode === 'string') {
+                        // Clean and validate: pairing codes are 8 alphanumeric chars
+                        const cleanCode = rawCode.replace(/[^A-Z0-9]/gi, '');
+                        console.log(`[EVO] rawCode="${rawCode}", cleanCode="${cleanCode}", len=${cleanCode.length}`);
+                        if (cleanCode.length >= 6 && cleanCode.length <= 10 && !codeEmitted) {
+                            codeEmitted = true;
+                            console.log(`[EVO] EMITTING pairing code: ${cleanCode}`);
+                            if (io) io.to(userId).emit("pairing_code", cleanCode);
+                            clearInterval(pollInterval);
+                        }
                     }
-                } catch (e) {
-                    console.log(`[EVO] Pairing attempt ${attempts} error:`, e.response?.data || e.message);
-                    if (attempts >= 20) {
-                        clearInterval(pairInterval);
-                        if (io) io.to(userId).emit("pairing_error", "Gagal mendapatkan kode pairing");
-                    }
-                }
-            }, 2000);
-
-        } else {
-            // ---- QR CODE MODE ----
-            let attempts = 0;
-            const qrInterval = setInterval(async () => {
-                attempts++;
-                try {
-                    const connectRes = await axios.get(`${EVO_URL}/instance/connect/${sessionId}`, {
-                        headers: { 'apikey': EVO_KEY }
-                    });
-                    console.log(`[EVO] QR attempt ${attempts} keys:`, Object.keys(connectRes.data || {}));
-
-                    if (connectRes.data?.base64) {
-                        console.log(`[EVO] Got QR, emitting...`);
-                        if (io) io.to(userId).emit("qr", connectRes.data.base64);
+                } else {
+                    // QR mode - emit base64 QR
+                    if (data?.base64) {
+                        if (io) io.to(userId).emit("qr", data.base64);
                     }
 
-                    // Check if already connected
+                    // Check connected
                     const stateRes = await axios.get(`${EVO_URL}/instance/connectionState/${sessionId}`, {
                         headers: { 'apikey': EVO_KEY }
                     });
                     if (stateRes.data?.instance?.state === 'open') {
-                        clearInterval(qrInterval);
+                        clearInterval(pollInterval);
                         if (io) io.to(userId).emit("status", "connected");
                         if (io) io.to(userId).emit("wa_list_update");
                     }
-                } catch (e) {
-                    console.log(`[EVO] QR attempt ${attempts} error:`, e.response?.data || e.message);
-                    if (attempts >= 30) clearInterval(qrInterval);
                 }
-            }, 2000);
-        }
+            } catch (e) {
+                console.log(`[EVO] poll attempt ${attempts} error:`, e.response?.data || e.message);
+            }
+
+            if (attempts >= 40) {
+                console.log(`[EVO] poll timeout, stopping.`);
+                clearInterval(pollInterval);
+                if (pairingNumber && !codeEmitted && io) {
+                    io.to(userId).emit("pairing_error", "Timeout: nomor tidak valid atau WA belum terhubung");
+                }
+            }
+        }, 2000);
 
         return { success: true };
     } catch (error) {
@@ -109,7 +104,7 @@ async function getWaList(userId) {
         const res = await axios.get(`${EVO_URL}/instance/connectionState/${sessionId}`, {
             headers: { 'apikey': EVO_KEY }
         });
-        
+
         if (res.data && res.data.instance) {
             return [{
                 sessionId,
@@ -130,7 +125,7 @@ async function disconnectSession(sessionId) {
                 headers: { 'apikey': EVO_KEY }
             });
         } catch (e) {}
-        
+
         await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, {
             headers: { 'apikey': EVO_KEY }
         });
