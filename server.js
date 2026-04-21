@@ -17,14 +17,14 @@ const activeBlasts = {};
 app.set("io", io);
 
 io.on("connection", (socket) => {
-    socket.on("join", (userId) => {
+    socket.on("join", async (userId) => {
         socket.join(userId);
         console.log(`User ${userId} joined room`);
 
         // If Baileys already generated a QR before this socket connected,
         socket.emit("wa_list_update");
         const { isUserConnected } = require('./services/waService');
-        if (isUserConnected(userId)) {
+        if (await isUserConnected(userId)) {
             socket.emit("status", "connected");
         } else {
             socket.emit("status", "disconnected");
@@ -359,8 +359,8 @@ app.post('/api/blast/start', async (req, res) => {
     const mode   = req.body?.mode   || "medium";
     const blastDelay = BLAST_DELAYS[mode] ?? BLAST_DELAYS.medium;
     const { isUserConnected } = require('./services/waService');
-    if (!isUserConnected(userId)) {
-        return res.status(400).json({ error: "WhatsApp belum terkoneksi." });
+    if (!(await isUserConnected(userId))) {
+        return res.status(400).json({ success: false, message: 'WhatsApp tidak terhubung' });
     }
 
     // Check if there are any targets at all before starting

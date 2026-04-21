@@ -147,9 +147,15 @@ async function sendMessage(sessionId, to, message, mediaUrl = null) {
     }
 }
 
+async function isUserConnected(userId) {
+    const list = await getWaList(userId);
+    return list.length > 0 && list[0].status === 'connected';
+}
+
 module.exports = {
     createInstance,
     getWaList,
     disconnectSession,
-    sendMessage
+    sendMessage,
+    isUserConnected
 };
