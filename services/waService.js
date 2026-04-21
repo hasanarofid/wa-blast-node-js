@@ -41,7 +41,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         version,
         logger,
         printQRInTerminal: false,
-        browser: ["Ubuntu", "Chrome", "20.0.04"],
+        browser: ["Chrome (Linux)", "", ""],
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, logger),
@@ -68,9 +68,10 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update;
+        console.log(`[BAILEYS] Update for ${sessionId}: connection=${connection}, qr=${qr ? 'yes' : 'no'}`);
         
         if (qr) {
-            qrs[sessionId] = qr; // Normally we'd convert this to base64 for frontend
+            qrs[sessionId] = qr;
             const QRCode = require('qrcode');
             QRCode.toDataURL(qr, (err, url) => {
                 if (!err && io) {
@@ -80,20 +81,17 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         }
 
         if (connection === 'close') {
-            const shouldReconnect = (lastDisconnect.error instanceof Boom) ? 
-                (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) : true;
+            const shouldReconnect = (lastDisconnect?.error)?.output?.statusCode !== DisconnectReason.loggedOut;
+            console.log(`[BAILEYS] Connection closed for ${sessionId} due to ${lastDisconnect?.error}, reconnecting: ${shouldReconnect}`);
             
-            console.log(`[BAILEYS] Connection closed due to ${lastDisconnect.error}, reconnecting: ${shouldReconnect}`);
-            
-            sessionStatus[sessionId] = 'disconnected';
-            if (io) {
-                io.to(userId).emit("status", "disconnected");
-                io.to(userId).emit("wa_list_update");
-            }
-
             if (shouldReconnect) {
                 createInstance(sessionId, userId, io);
             } else {
+                sessionStatus[sessionId] = 'disconnected';
+                if (io) {
+                    io.to(userId).emit("status", "disconnected");
+                    io.to(userId).emit("wa_list_update");
+                }
                 // Permanently disconnected
                 delete sessions[sessionId];
                 delete sessionStatus[sessionId];
