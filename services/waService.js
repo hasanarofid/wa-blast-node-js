@@ -41,7 +41,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         version,
         logger,
         printQRInTerminal: false,
-        browser: ["Chrome (Linux)", "", ""],
+        browser: ["Ubuntu", "Chrome", "20.0.04"],
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, logger),
@@ -70,7 +70,8 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         const { connection, lastDisconnect, qr } = update;
         console.log(`[BAILEYS] Update for ${sessionId}: connection=${connection}, qr=${qr ? 'yes' : 'no'}`);
         
-        if (qr) {
+        // If we are in pairing mode, DO NOT process QR events to avoid interference
+        if (qr && !pairingNumber) {
             qrs[sessionId] = qr;
             const QRCode = require('qrcode');
             QRCode.toDataURL(qr, (err, url) => {
