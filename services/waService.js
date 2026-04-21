@@ -41,7 +41,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         version,
         logger,
         printQRInTerminal: false,
-        browser: ["Windows", "Chrome", "11.0.0.1"],
+        browser: ["Chrome (Linux)", "Chrome", "110.0.0.0"],
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, logger),
@@ -56,7 +56,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update;
-        console.log(`[BAILEYS] Update for ${sessionId}: connection=${connection}, qr=${qr ? 'yes' : 'no'}`);
+        console.log(`[BAILEYS] Update for ${sessionId}: connection=${connection}, qr=${qr ? 'yes' : 'no'}, status=${sessionStatus[sessionId]}`);
         
         // If we are in pairing mode, DO NOT process QR events to avoid interference
         if (qr) {
@@ -73,12 +73,20 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         }
 
         if (connection === 'close') {
-            const shouldReconnect = (lastDisconnect?.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-            console.log(`[BAILEYS] Connection closed for ${sessionId} due to ${lastDisconnect?.error}, reconnecting: ${shouldReconnect}`);
+            const isLoggedOut = (lastDisconnect?.error)?.output?.statusCode === DisconnectReason.loggedOut;
+            const isPending = sessionStatus[sessionId] === 'pending';
+            
+            // CRITICAL: If pending (pairing), DO NOT reconnect automatically to avoid handshake loops
+            const shouldReconnect = !isLoggedOut && !isPending;
+            
+            console.log(`[BAILEYS] Connection closed for ${sessionId}. Pending: ${isPending}, LoggedOut: ${isLoggedOut}, Reconnecting: ${shouldReconnect}`);
             
             if (shouldReconnect) {
                 createInstance(sessionId, userId, io);
             } else {
+                if (isPending) {
+                    console.log(`[BAILEYS] Pairing connection closed for ${sessionId}. User may need to retry if linking wasn't finished.`);
+                }
                 sessionStatus[sessionId] = 'disconnected';
                 if (io) {
                     io.to(userId).emit("status", "disconnected");
@@ -105,8 +113,8 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
     let pairingCodeResolved = null;
 
     if (pairingNumber && !sock.authState.creds.registered) {
-        console.log(`[BAILEYS] Requesting pairing code for ${pairingNumber} using browser: Windows/Chrome`);
-        // Delay 3 seconds to ensure socket is fully ready
+        console.log(`[BAILEYS] Requesting pairing code for ${pairingNumber} using browser: Chrome/Linux`);
+        // Delay to ensure socket is fully ready
         await delay(3000);
         try {
             const cleanNumber = pairingNumber.replace(/[^0-9]/g, '');
