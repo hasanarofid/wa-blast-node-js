@@ -34,13 +34,15 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
     const sessionPath = path.join(SESSIONS_DIR, sessionId);
     const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-    const { version } = await fetchLatestBaileysVersion();
+    
+    // Version locked for stability in v9
+    const version = [2, 3000, 1015901307];
 
     const sock = makeWASocket({
         version,
         logger,
         printQRInTerminal: false,
-        browser: ["Ubuntu", "Chrome", "20.0.04"],
+        browser: ["Chrome", "macOS", "110.0.0.0"],
         markOnline: false,
         auth: {
             creds: state.creds,
