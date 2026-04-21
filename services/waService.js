@@ -18,15 +18,18 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
     try {
         console.log(`[EVO v2] Starting fresh for ${sessionId} | pairing=${pairingNumber}`);
 
-        // 1. Cleanup existing
+        // 1. Proactive Clean Slate (v17.8)
+        console.log(`[EVO v2] Force cleanup for ${sessionId}...`);
         try {
             await axios.delete(`${EVO_URL}/instance/logout/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
+            await new Promise(r => setTimeout(r, 1000));
         } catch (e) {}
         try {
             await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
+            await new Promise(r => setTimeout(r, 2000));
         } catch (e) {}
 
-        // 2. Create fresh instance with retry logic
+        // 2. Create fresh instance with robust retry
         let createSuccess = false;
         const createPayload = {
             instanceName: sessionId,
@@ -37,7 +40,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         };
         if (pairingNumber) createPayload.number = String(pairingNumber);
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 5; i++) {
             try {
                 await axios.post(`${EVO_URL}/instance/create`, createPayload, { 
                     headers: { 'apikey': EVO_KEY } 
@@ -45,16 +48,24 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                 createSuccess = true;
                 break;
             } catch (e) {
-                console.log(`[EVO v2] Create attempt ${i+1} failed:`, e.response?.data || e.message);
-                await new Promise(r => setTimeout(r, 2000));
+                const errMsg = e.response?.data?.message?.[0] || e.message;
+                console.log(`[EVO v2] Create attempt ${i+1} fail: ${errMsg}`);
+                
+                // If already in use despite delete, try deleting one more time
+                if (errMsg.includes("already in use")) {
+                    await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } }).catch(()=>{});
+                    await new Promise(r => setTimeout(r, 3000));
+                } else {
+                    await new Promise(r => setTimeout(r, 2000));
+                }
             }
         }
 
-        if (!createSuccess) throw new Error("Gagal membuat instance setelah 3 percobaan.");
+        if (!createSuccess) throw new Error("Gagal membuat instance setelah 5 percobaan.");
 
         console.log(`[EVO v2] Instance ready: ${sessionId} | pairing=${!!pairingNumber}`);
 
-        // 3. Wait for initialization (v2 needs more time to spin up Baileys)
+        // 3. Wait for initialization
         await new Promise(r => setTimeout(r, 6000));
 
         if (pairingNumber) {
