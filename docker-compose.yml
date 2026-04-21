@@ -3,27 +3,37 @@ version: '3.8'
 services:
   redis:
     image: redis:alpine
-    container_name: setorwa-redis
+    container_name: redis
     restart: always
+    networks:
+      - setorwa-network
 
   evolution:
-    image: evoapicloud/evolution-api:latest
-    container_name: setorwa-evolution
+    image: evoapicloud/evolution-api:v2.2.3
+    container_name: evolution
     restart: always
     environment:
-      - SERVER_TYPE=http
+      - SERVER_URL=http://evolution:8080
       - CACHE_REDIS_ENABLED=true
-      - CACHE_REDIS_HOST=redis
-      - CACHE_REDIS_PORT=6379
-      - CACHE_LOCAL_ENABLED=true
+      - CACHE_REDIS_URI=redis://redis:6379/1
+      - CACHE_REDIS_PREFIX_KEY=evolution
+      - CACHE_REDIS_SAVE_INSTANCES=false
+      - CACHE_LOCAL_ENABLED=false
+      - AUTHENTICATION_TYPE=apikey
+      - AUTHENTICATION_API_KEY=setorwasecret123
+      - QRCODE_LIMIT=30
+      - QRCODE_COLOR=#198754
+      - CONFIG_SESSION_PHONE_CLIENT=SetorwaApp
+      - CONFIG_SESSION_PHONE_NAME=Chrome
       - DATABASE_ENABLED=false
-      - AUTH_API_KEY=${EVO_KEY}
     depends_on:
       - redis
+    networks:
+      - setorwa-network
 
   app:
     build: .
-    container_name: setorwa-app
+    container_name: app
     restart: always
     ports:
       - "3001:3001"
@@ -38,6 +48,12 @@ services:
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
       - EVO_URL=http://evolution:8080
-      - EVO_KEY=${EVO_KEY}
+      - EVO_KEY=setorwasecret123
     depends_on:
       - evolution
+    networks:
+      - setorwa-network
+
+networks:
+  setorwa-network:
+    driver: bridge
