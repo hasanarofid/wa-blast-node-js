@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw MASTER WA | Platform #1 Indonesia</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wa: {
+                            light: '#25D366',
+                            DEFAULT: '#128C7E',
+                            dark: '#075E54'
+                        },
+                        cuan: {
+                            gold: '#FFD700',
+                            orange: '#FFA500'
+                        }
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-inter min-h-screen pb-24">
+
+    <!-- Top Navbar -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center border-2 border-wa-light p-1">
+                    <i class="fa-brands fa-whatsapp text-wa text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-poppins font-black m-0 leading-none text-gray-800">MASTER WA<span
+                            class="text-wa px-1">|</span>VIP</h1>
+                    <span class="text-gray-500 text-xs font-semibold tracking-wide">Withdraw Saldo</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="/login"
+                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">Keluar</span>
+                </a>
+                <div
+                    class="w-10 h-10 bg-wa text-white rounded-full flex items-center justify-center font-bold text-lg shadow-md border-2 border-white">
+                    C
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-green-50 border-t border-green-100 py-2">
+            <div class="max-w-4xl mx-auto px-4 flex justify-between items-center text-sm font-semibold">
+                <span class="text-gray-600 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-user text-wa text-lg"></i>
+                    Halo, <span class="text-wa" id="top-username">...</span>
+                </span>
+                <span class="text-green-600 flex items-center gap-2">
+                    <i class="fa-solid fa-circle text-[10px] animate-pulse"></i> Online
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- Info Saldo -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-wa flex flex-col gap-6 relative overflow-hidden">
+            <div class="flex justify-between items-start z-10">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-12 h-12 bg-wa text-white rounded-xl flex items-center justify-center text-xl shadow-md">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-600 uppercase tracking-wide">SALDO TERSEDIA</h3>
+                        <p class="text-wa font-bold text-sm" id="wd-min">Min: Rp. 10.000</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-gray-600 font-bold text-2xl flex items-end gap-1 z-10">
+                Rp <span class="text-6xl text-gray-900 font-black leading-none drop-shadow-sm" id="wd-balance">0</span>
+            </div>
+
+            <!-- Progress section -->
+            <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 z-10 mt-2">
+                <div class="flex justify-between items-center text-xs font-bold text-gray-600 mb-2">
+                    <span>Progress ke minimum</span>
+                    <span class="text-wa" id="wd-progress">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+                    <div class="bg-wa h-2.5 rounded-full" style="width: 0%" id="wd-progress-bar"></div>
+                </div>
+                <div id="wd-warn" class="text-orange-500 text-xs font-semibold flex items-center gap-1 mt-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Kurang Rp. 10.000 lagi
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Withdraw Form Container -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-12 h-12 bg-blue-100/50 text-blue-500 rounded-xl flex items-center justify-center text-xl shadow-sm">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800 leading-tight">Request Withdraw</h2>
+                    <span class="text-gray-500 text-sm">Tarik saldo ke rekening Anda</span>
+                </div>
+            </div>
+
+            <!-- Empty State for Bank info -->
+            <div id="wd-empty"
+                class="bg-red-50/30 border border-red-100 rounded-2xl p-8 flex flex-col items-center justify-center text-center">
+                <div
+                    class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-500 text-3xl mb-4 shadow-sm">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800 mb-1">Data Bank Belum Diatur</h3>
+                <p class="text-gray-500 text-sm mb-4">Silahkan atur metode pembayaran di menu profil terlebih dahulu</p>
+                <a href="/profil"
+                    class="bg-gray-800 hover:bg-black text-white px-6 py-2 rounded-xl text-sm font-bold shadow-md transition-all">
+                    Pengaturan Profil
+                </a>
+            </div>
+
+            <!-- Action State -->
+            <div id="wd-action" style="display:none;" class="flex flex-col gap-4 mt-6 border-t border-gray-100 pt-6">
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <div class="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wide">Tujuan Penarikan</div>
+                    <div class="font-bold text-gray-800" id="wd-bank-name">-</div>
+                    <div class="text-sm font-mono text-gray-600" id="wd-bank-acc">-</div>
+                </div>
+                <button id="btn-do-wd" disabled onclick="doSubmitWd()"
+                    class="w-full bg-gray-300 text-gray-500 font-bold py-3 px-4 rounded-xl shadow-sm cursor-not-allowed transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-lock"></i> Saldo Kurang
+                </button>
+            </div>
+
+            <!-- History -->
+            <div class="mt-8 border-t border-gray-100 pt-6">
+                <div class="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Penarikan
+                </div>
+                <div id="wd-history" class="flex flex-col gap-2">
+                    <div class="text-center text-[10px] text-gray-400 py-2"><i class="fa-solid fa-spinner fa-spin"></i>
+                        Memuat riwayat...</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+        <div
+            class="max-w-lg mx-auto px-6 py-3 flex justify-between items-center text-[10px] md:text-xs font-bold text-gray-400">
+            <a href="/dashboard" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-house text-xl mb-1"></i>
+                Dashboard
+            </a>
+            <a href="/whatsapp" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-brands fa-whatsapp text-xl mb-1"></i>
+                WhatsApp
+            </a>
+            <a href="/referral" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-users text-xl mb-1"></i>
+                Referral
+            </a>
+
+            <!-- Active state item -->
+            <a href="/withdraw"
+                class="flex flex-col items-center gap-1 text-white bg-wa px-4 py-3 rounded-2xl shadow-lg shadow-wa/40 -mt-6 hover:bg-wa-dark transition-all scale-110">
+                <i class="fa-solid fa-money-bill-wave text-2xl mb-1"></i>
+                Withdraw
+            </a>
+
+            <a href="/profil" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-user-gear text-xl mb-1"></i>
+                Profil
+            </a>
+        </div>
+        <script>
+            // ── Navigation State ──
+            const username = localStorage.getItem('user_username') || '';
+            if (!username) window.location.href = '/login';
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const navUser = document.getElementById('top-username');
+                if (navUser) navUser.textContent = username;
+            });
+
+            // ── Elements ──
+            const balEl = document.getElementById('wd-balance');
+            const minEl = document.getElementById('wd-min');
+            const progEl = document.getElementById('wd-progress');
+            const progBar = document.getElementById('wd-progress-bar');
+            const progWarn = document.getElementById('wd-warn');
+            const emptyState = document.getElementById('wd-empty');
+            const actionState = document.getElementById('wd-action');
+            const btnWd = document.getElementById('btn-do-wd');
+
+            const fmtRp = n => n.toLocaleString('id-ID');
+
+            async function initWd() {
+                try {
+                    // Fetch user info for balance + incentives for minimum
+                    const rInfo = await fetch('/api/user/info?username=' + encodeURIComponent(username));
+                    const dInfo = await rInfo.json();
+
+                    // Fetch payment method
+                    const rPay = await fetch('/api/user/payment-method?username=' + encodeURIComponent(username));
+                    const dPay = await rPay.json();
+
+                    if (!dInfo.success) return;
+
+                    const bal = dInfo.user.balance || 0;
+                    const min = dInfo.incentives.minWithdraw || 10000;
+
+                    // Update UI
+                    if (balEl) balEl.textContent = fmtRp(bal);
+                    if (minEl) minEl.textContent = `Min: Rp. ${fmtRp(min)}`;
+
+                    // Progress
+                    const pct = Math.min(100, Math.floor((bal / min) * 100));
+                    if (progEl) progEl.textContent = pct + '%';
+                    if (progBar) progBar.style.width = pct + '%';
+
+                    if (bal >= min) {
+                        if (progWarn) {
+                            progWarn.className = 'text-green-500 text-xs font-semibold flex items-center gap-1 mt-2';
+                            progWarn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Saldo telah mencapai batas minimum';
+                        }
+                    } else {
+                        if (progWarn) {
+                            progWarn.className = 'text-orange-500 text-xs font-semibold flex items-center gap-1 mt-2';
+                            progWarn.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Kurang Rp. ${fmtRp(min - bal)} lagi`;
+                        }
+                    }
+
+                    // Check Bank Data
+                    if (dPay.success && dPay.paymentMethod && dPay.paymentMethod.method === 'bank') {
+                        // Bank data exists
+                        if (emptyState) emptyState.style.display = 'none';
+                        if (actionState) {
+                            actionState.style.display = 'flex';
+                            const p = dPay.paymentMethod;
+                            document.getElementById('wd-bank-name').textContent = p.bankName;
+                            document.getElementById('wd-bank-acc').textContent = p.accountNumber + ' - ' + p.accountName;
+
+                            if (bal >= min) {
+                                btnWd.disabled = false;
+                                btnWd.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                                btnWd.classList.add('bg-wa', 'hover:bg-wa-dark', 'text-white');
+                                btnWd.innerHTML = '<i class="fa-solid fa-money-bill-wave"></i> Tarik Sekarang';
+                            } else {
+                                btnWd.disabled = true;
+                                btnWd.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                                btnWd.classList.remove('bg-wa', 'hover:bg-wa-dark', 'text-white');
+                                btnWd.innerHTML = '<i class="fa-solid fa-lock"></i> Saldo Kurang';
+                            }
+                        }
+                    } else {
+                        // No bank
+                        if (emptyState) emptyState.style.display = 'flex';
+                        if (actionState) actionState.style.display = 'none';
+                    }
+
+                    // Load History
+                    loadHistory();
+
+                } catch (e) { }
+            }
+
+            async function doSubmitWd() {
+                btnWd.disabled = true;
+                btnWd.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+
+                try {
+                    const r = await fetch('/api/withdraw', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username })
+                    });
+                    const d = await r.json();
+                    if (d.success) {
+                        alert('Berhasil! ' + d.message);
+                        location.reload();
+                    } else {
+                        alert('Gagal: ' + d.message);
+                        btnWd.disabled = false;
+                        btnWd.innerHTML = '<i class="fa-solid fa-money-bill-wave"></i> Tarik Sekarang';
+                    }
+                } catch (e) {
+                    alert('Terjadi kesalahan jaringan');
+                    btnWd.disabled = false;
+                    btnWd.innerHTML = '<i class="fa-solid fa-money-bill-wave"></i> Tarik Sekarang';
+                }
+            }
+
+            async function loadHistory() {
+                try {
+                    const r = await fetch('/api/user/withdrawals?username=' + encodeURIComponent(username));
+                    const d = await r.json();
+                    const container = document.getElementById('wd-history');
+                    if (!container) return;
+
+                    if (!d.success || !d.data.length) {
+                        container.innerHTML = '<div class="text-center text-xs text-gray-400 py-4">Belum ada riwayat</div>';
+                        return;
+                    }
+
+                    container.innerHTML = d.data.map(w => {
+                        let st = '';
+                        if (w.status === 'pending') st = '<span class="text-xs font-bold text-orange-500 bg-orange-50 px-2 py-1 rounded">Pending</span>';
+                        else if (w.status === 'approved') st = '<span class="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded">Sukses</span>';
+                        else st = '<span class="text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded">Ditolak</span>';
+
+                        const dt = new Date(w.createdAt);
+                        const dts = dt.toLocaleDateString('id-ID') + ' ' + dt.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+                        return `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
+                        <div>
+                            <div class="font-bold text-sm text-gray-700">Rp. ${fmtRp(w.amount)}</div>
+                            <div class="text-[10px] text-gray-400">${dts}</div>
+                        </div>
+                        <div>${st}</div>
+                    </div>`;
+                    }).join('');
+                } catch (e) { }
+            }
+
+            initWd();
+        </script>
+</body>
+
+</html>

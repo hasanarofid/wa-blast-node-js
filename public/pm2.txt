@@ -1,0 +1,86 @@
+ Describing process with id 0 - name setorwa 
+┌───────────────────┬───────────────────────────────────┐
+│ status            │ online                            │
+│ name              │ setorwa                           │
+│ namespace         │ default                           │
+│ version           │ 1.0.0                             │
+│ restarts          │ 37                                │
+│ uptime            │ 65s                               │
+│ script path       │ /var/www/setorwa/server.js        │
+│ script args       │ N/A                               │
+│ error log path    │ /root/.pm2/logs/setorwa-error.log │
+│ out log path      │ /root/.pm2/logs/setorwa-out.log   │
+│ pid path          │ /root/.pm2/pids/setorwa-0.pid     │
+│ interpreter       │ node                              │
+│ interpreter args  │ N/A                               │
+│ script id         │ 0                                 │
+│ exec cwd          │ /var/www/setorwa                  │
+│ exec mode         │ fork_mode                         │
+│ node.js version   │ 20.20.0                           │
+│ node env          │ N/A                               │
+│ watch & reload    │ ✘                                 │
+│ unstable restarts │ 0                                 │
+│ created at        │ 2026-02-28T18:03:36.157Z          │
+└───────────────────┴───────────────────────────────────┘
+ Actions available 
+┌────────────────────────┐
+│ km:heapdump            │
+│ km:cpu:profiling:start │
+│ km:cpu:profiling:stop  │
+│ km:heap:sampling:start │
+│ km:heap:sampling:stop  │
+└────────────────────────┘
+ Trigger via: pm2 trigger setorwa <action_name>
+
+ Code metrics value 
+┌────────────────────────┬──────────────┐
+│ Used Heap Size         │ 27.92 MiB    │
+│ Heap Usage             │ 92.53 %      │
+│ Heap Size              │ 30.17 MiB    │
+│ HTTP                   │ 0.07 req/min │
+│ HTTP P95 Latency       │ 100 ms       │
+│ HTTP Mean Latency      │ 3 ms         │
+│ Event Loop Latency p95 │ 1.18 ms      │
+│ Event Loop Latency     │ 0.35 ms      │
+│ Active handles         │ 7            │
+│ Active requests        │ 0            │
+└────────────────────────┴──────────────┘
+ Divergent env variables from local env 
+┌────────────────┬────────────────────────────────────────┐
+│ PWD            │ /var/www/setorwa                       │
+│ SSH_CONNECTION │ 180.248.13.100 28467 137.184.15.175 22 │
+│ XDG_SESSION_ID │ 30                                     │
+│ SSH_CLIENT     │ 180.248.13.100 28467 22                │
+└────────────────┴────────────────────────────────────────┘
+
+ Add your own code metrics: http://bit.ly/code-metrics
+ Use `pm2 logs setorwa [--lines 1000]` to display logs
+ Use `pm2 env 0` to display environment variables
+ Use `pm2 monit` to monitor CPU and Memory usage setorwa
+drwxr-xr-x  3 root root 4096 Feb 25 14:47 @pinojs
+drwxr-xr-x  8 root root 4096 Feb 28 16:42 pino
+drwxr-xr-x  5 root root 4096 Feb 28 16:42 pino-abstract-transport
+drwxr-xr-x  5 root root 4096 Feb 25 14:47 pino-std-serializers
+/root
+{
+  "name": "setorwa",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "description": "",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc.9",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "pino": "^10.3.1",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.3"
+  }
+}

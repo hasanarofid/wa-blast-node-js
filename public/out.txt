@@ -1,0 +1,50 @@
+Admin panel: http://localhost:3001/admin
+Auto-reconnecting session for cobasaja
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+User cobasaja joined room
+[QR] Cleared session folder for cobasaja → fresh start
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+[QR] Cleared session folder for cobasaja → fresh start
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+User cobasaja joined room
+User cobasaja joined room
+User cobasaja joined room
+[QR] Cleared session folder for cobasaja → fresh start
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+Express server running on http://localhost:3001
+Admin panel: http://localhost:3001/admin
+Auto-reconnecting session for cobasaja
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+Connection closed for cobasaja (Reason: 408). Reconnecting in 2s...
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+User cobasaja joined room
+Re-emitted cached QR to cobasaja
+Connection closed for cobasaja (Reason: 408). Reconnecting in 2s...
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+Connection closed for cobasaja (Reason: 408). Reconnecting in 2s...
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+Connection closed for cobasaja (Reason: 408). Reconnecting in 2s...
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+User cobasaja joined room
+Re-emitted cached QR to cobasaja
+User cobasaja joined room
+Re-emitted cached QR to cobasaja
+Connection closed for cobasaja (Reason: 408). Reconnecting in 2s...
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+User cobasaja joined room
+Re-emitted cached QR to cobasaja
+Connection closed for cobasaja (Reason: 515). Reconnecting in 2s...
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+WhatsApp connected for user: cobasaja (6285213002859)
+User cobasaja joined room
+Express server running on http://localhost:3001
+Admin panel: http://localhost:3001/admin
+Auto-reconnecting session for cobasaja
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+WhatsApp connected for user: cobasaja (6285213002859)
+User cobasaja joined room
+Express server running on http://localhost:3001
+Admin panel: http://localhost:3001/admin
+Auto-reconnecting session for cobasaja
+[Baileys] Using WA version: 2.3000.1033846690 for cobasaja
+WhatsApp connected for user: cobasaja (6285213002859)

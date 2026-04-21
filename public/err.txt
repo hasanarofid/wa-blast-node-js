@@ -1,0 +1,730 @@
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+Error: Cannot find module 'express'
+Require stack:
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/var/www/setorwa/server.js:1:17)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Object.<anonymous> (/usr/lib/node_modules/pm2/lib/ProcessContainerFork.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/var/www/setorwa/server.js' ]
+}
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+SyntaxError: Bad escaped character in JSON at position 10
+    at JSON.parse (<anonymous>)
+    at parse (/var/www/setorwa/node_modules/body-parser/lib/types/json.js:72:19)
+    at /var/www/setorwa/node_modules/body-parser/lib/read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    at invokeCallback (/var/www/setorwa/node_modules/raw-body/index.js:238:16)
+    at done (/var/www/setorwa/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/var/www/setorwa/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:524:28)
+    at endReadableNT (node:internal/streams/readable:1698:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Reconnect failed for cobasaja Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/var/www/setorwa/services/waService.js',
+    '/var/www/setorwa/server.js'
+  ]
+}
+Reconnect failed for cobasaja Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/var/www/setorwa/services/waService.js',
+    '/var/www/setorwa/server.js'
+  ]
+}
+Reconnect failed for cobasaja Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/var/www/setorwa/services/waService.js',
+    '/var/www/setorwa/server.js'
+  ]
+}
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:105:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:105:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:105:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:105:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:105:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:105:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:105:5
+Reconnect failed for cobasaja Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/var/www/setorwa/services/waService.js',
+    '/var/www/setorwa/server.js'
+  ]
+}
+Reconnect failed for cobasaja Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/var/www/setorwa/services/waService.js',
+    '/var/www/setorwa/server.js'
+  ]
+}
+Reconnect failed for cobasaja Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/var/www/setorwa/services/waService.js',
+    '/var/www/setorwa/server.js'
+  ]
+}
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:175:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:175:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:175:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:175:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:175:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:175:5
+Reconnect failed for cobasaja Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/var/www/setorwa/services/waService.js',
+    '/var/www/setorwa/server.js'
+  ]
+}
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:259:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:259:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:259:5

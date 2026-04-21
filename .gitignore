@@ -1,0 +1,10 @@
+node_modules/
+sessions/
+data/
+*.zip
+.env
+deploy.log
+extracted_setorwa/
+server.js.bak
+server.js.tmp
+services/evo-api-backup.tar

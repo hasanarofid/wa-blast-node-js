@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard MASTER WA | Platform #1 Indonesia</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wa: {
+                            light: '#25D366',
+                            DEFAULT: '#128C7E',
+                            dark: '#075E54'
+                        },
+                        cuan: {
+                            gold: '#FFD700',
+                            orange: '#FFA500'
+                        }
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-inter min-h-screen pb-24">
+
+    <!-- Top Navbar -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center border-2 border-wa-light p-1">
+                    <i class="fa-brands fa-whatsapp text-wa text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-poppins font-black m-0 leading-none text-gray-800">MASTER WA<span
+                            class="text-wa px-1">|</span>VIP</h1>
+                    <span class="text-gray-500 text-xs font-semibold tracking-wide">WhatsApp Management</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="/login"
+                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">Keluar</span>
+                </a>
+                <div class="w-10 h-10 bg-wa text-white rounded-full flex items-center justify-center font-bold text-lg shadow-md border-2 border-white"
+                    id="nav-avatar">
+                    ?
+                </div>
+            </div>
+        </div>
+
+        <!-- User Status Bar -->
+        <div class="bg-green-50 border-t border-green-100 py-2">
+            <div class="max-w-4xl mx-auto px-4 flex justify-between items-center text-sm font-semibold">
+                <span class="text-gray-600 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-user text-wa text-lg"></i>
+                    Halo, <span class="text-wa" id="nav-username">...</span>
+                </span>
+                <span class="text-green-600 flex items-center gap-2">
+                    <i class="fa-solid fa-circle text-[10px] animate-pulse"></i> Online
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- Welcome Banner -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-bold text-wa mb-1 flex items-center gap-2">
+                    <i class="fa-solid fa-hand-wave text-wa-light text-xl"></i> Halo, <span
+                        id="welcome-username">...</span>!
+                </h2>
+                <p class="text-gray-500 text-sm">Selamat datang di dashboard MASTER WA | VIP</p>
+            </div>
+            <div class="text-4xl">✨</div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- Total Pesan -->
+            <div
+                class="bg-gradient-to-br from-wa-light to-wa rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 opacity-10 text-8xl">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+                <!-- Icon container -->
+                <div
+                    class="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center text-2xl mb-8 border border-white/30 text-white">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+                <div class="text-5xl font-black mb-2" id="total-pesan">0</div>
+                <div class="text-sm font-medium opacity-90 mb-1">Total Pesan</div>
+                <div class="text-xs font-semibold opacity-80 flex items-center gap-1">
+                    
+                </div>
+            </div>
+
+            <!-- Total Earning -->
+            <div
+                class="bg-gradient-to-br from-yellow-500 to-cuan-orange rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 opacity-10 text-8xl">
+                    <i class="fa-solid fa-coins"></i>
+                </div>
+                <!-- Icon container -->
+                <div
+                    class="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center text-2xl mb-8 border border-white/30 text-white">
+                    <i class="fa-solid fa-coins"></i>
+                </div>
+                <div class="text-3xl font-black mb-2 drop-shadow-md" id="total-earning">Rp. 0</div>
+                <div class="text-sm font-medium opacity-90 mb-1">Total Earning</div>
+                <div class="text-xs font-semibold opacity-80 flex items-center gap-1">
+                    <i class="fa-solid fa-calendar-alt"></i> Penghasilan
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Total Balance Card -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col gap-4">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-wallet text-wa"></i> TOTAL BALANCE
+                    </h3>
+                    <div class="text-4xl font-black text-wa drop-shadow-sm" id="total-balance">Rp. 0</div>
+                </div>
+                <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-wa text-2xl">
+                    <i class="fa-solid fa-credit-card"></i>
+                </div>
+            </div>
+
+            <a href="/withdraw"
+                class="w-full bg-wa hover:bg-wa-dark text-white font-bold py-3 rounded-xl shadow-md transition-all text-center flex items-center justify-center gap-2 mt-2">
+                <i class="fa-solid fa-circle-arrow-up"></i> Withdraw Sekarang
+            </a>
+        </div>
+
+        <!-- Informasi Section -->
+        <div class="mt-8 space-y-4">
+            <h3 class="text-gray-800 font-bold flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-circle-info text-wa"></i> Informasi
+            </h3>
+
+            <!-- Program Referral Card -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative overflow-hidden">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-users text-wa"></i>
+                    <h4 class="font-bold text-gray-800 tracking-wide text-sm md:text-base">Program Referral</h4>
+                    <div class="absolute top-6 right-6 text-xl">🎯</div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-[#f0fdf4] rounded-xl p-4 border border-green-50">
+                        <div class="text-[10px] sm:text-xs font-bold text-gray-500 mb-1">Total Referral</div>
+                        <div class="text-xl md:text-2xl font-black text-wa">0</div>
+                    </div>
+                    <div class="bg-[#fffbeb] rounded-xl p-4 border border-yellow-50">
+                        <div class="text-[10px] sm:text-xs font-bold text-gray-500 mb-1">Rate Komisi</div>
+                        <div class="text-xl md:text-2xl font-black text-cuan-orange" id="user-referral-rate">Rp. 50
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarif & Ketentuan Card -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice-dollar text-blue-600"></i>
+                        <h4 class="font-bold text-gray-800 tracking-wide text-sm md:text-base">Tarif & Ketentuan</h4>
+                    </div>
+                    <i class="fa-solid fa-chart-line text-blue-600 text-xl"></i>
+                </div>
+
+                <div class="space-y-3">
+                    <div
+                        class="flex justify-between items-center bg-[#f8fafc] px-4 py-3 rounded-xl text-xs md:text-sm font-bold border border-blue-50">
+                        <span class="text-gray-600">Rate per pesan:</span>
+                        <span class="text-blue-500" id="user-rate-per-msg">Rp. 350</span>
+                    </div>
+                    <div
+                        class="flex justify-between items-center bg-[#f0fdf4] px-4 py-3 rounded-xl text-xs md:text-sm font-bold border border-green-50">
+                        <span class="text-gray-600">Min. withdraw:</span>
+                        <span class="text-wa" id="user-min-withdraw">Rp. 10.000</span>
+                    </div>
+                    <div
+                        class="flex justify-between items-center bg-[#faf5ff] px-4 py-3 rounded-xl text-xs md:text-sm font-bold border border-purple-50">
+                        <span class="text-gray-600">Member sejak:</span>
+                        <span class="text-purple-500" id="dash-joined">-</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+        <div
+            class="max-w-lg mx-auto px-6 py-3 flex justify-between items-center text-[10px] md:text-xs font-bold text-gray-400">
+            <!-- Active state item -->
+            <a href="/dashboard"
+                class="flex flex-col items-center gap-1 text-white bg-wa px-4 py-3 rounded-2xl shadow-lg shadow-wa/40 -mt-6 hover:bg-wa-dark transition-all scale-110">
+                <i class="fa-solid fa-house text-2xl mb-1"></i>
+                Dashboard
+            </a>
+
+            <a href="/whatsapp" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-brands fa-whatsapp text-xl mb-1"></i>
+                WhatsApp
+            </a>
+            <a href="/referral" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-users text-xl mb-1"></i>
+                Referral
+            </a>
+            <a href="/withdraw" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-money-bill-wave text-xl mb-1"></i>
+                Withdraw
+            </a>
+            <a href="/profil" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-user-gear text-xl mb-1"></i>
+                Profil
+            </a>
+        </div>
+    </nav>
+
+<!-- WA ICON (PALING ATAS) -->
+<a href="https://wa.me/6287744258409" target="_blank"
+    class="fixed bottom-56 right-4 bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full shadow-lg shadow-green-500/30 flex items-center justify-center text-3xl transition-transform hover:scale-110 z-40">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<!-- ICON ATAS (STAR / GRUP) -->
+<a href="https://t.me/masterwavipchannel" target="_blank"
+    class="fixed bottom-40 right-4 bg-blue-500 hover:bg-blue-600 text-white w-14 h-14 rounded-full shadow-lg shadow-yellow-500/30 flex items-center justify-center text-3xl transition-transform hover:scale-110 z-40">
+    <i class="fa-solid fa-star"></i>
+</a>
+
+<!-- TELEGRAM ICON (CS) -->
+<a href="https://t.me/csmasterwavip" target="_blank"
+    class="fixed bottom-24 right-4 bg-blue-500 hover:bg-blue-600 text-white w-14 h-14 rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center text-3xl transition-transform hover:scale-110 z-40">
+    <i class="fa-brands fa-telegram"></i>
+</a>
+
+    <script>
+
+        // ── Load data user dari localStorage ────────────────────────────────
+        function formatTanggal(isoString) {
+            if (!isoString) return '-';
+            const d = new Date(isoString);
+            const bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            return d.getDate() + ' ' + bulan[d.getMonth()] + ' ' + d.getFullYear();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const username = localStorage.getItem('user_username') || '';
+            const joinedAt = localStorage.getItem('user_joinedAt') || '';
+
+            const navUsernameEl = document.getElementById('nav-username');
+            const navAvatarEl = document.getElementById('nav-avatar');
+            const welcomeEl = document.getElementById('welcome-username');
+            const dashJoinedEl = document.getElementById('dash-joined');
+
+            if (navUsernameEl) navUsernameEl.textContent = username || 'Guest';
+            if (navAvatarEl) navAvatarEl.textContent = username ? username.charAt(0).toUpperCase() : '?';
+            if (welcomeEl) welcomeEl.textContent = username || 'Guest';
+            if (dashJoinedEl) dashJoinedEl.textContent = formatTanggal(joinedAt);
+        });
+
+        // Load live incentives from admin panel settings
+        fetch('/api/user/info?username=' + encodeURIComponent(localStorage.getItem('user_username') || ''))
+            .then(r => r.json())
+            .then(data => {
+                const fmtRp = n => 'Rp. ' + Number(n).toLocaleString('id-ID');
+                if (data.user) {
+                    const u = data.user;
+                    const balEl = document.getElementById('total-balance');
+                    const arnEl = document.getElementById('total-earning');
+                    const pEl = document.getElementById('total-pesan');
+                    if (balEl) balEl.textContent = fmtRp(u.balance || 0);
+                    if (arnEl) arnEl.textContent = fmtRp(u.totalEarnings || 0);
+                    if (pEl) pEl.textContent = Number(u.totalBlast || 0).toLocaleString('id-ID');
+                }
+                if (data.incentives) {
+                    const iv = data.incentives;
+                    const rateEl = document.getElementById('user-rate-per-msg');
+                    const minEl = document.getElementById('user-min-withdraw');
+                    const refEl = document.getElementById('user-referral-rate');
+                    if (rateEl) rateEl.textContent = fmtRp(iv.ratePerMessage);
+                    if (minEl) minEl.textContent = fmtRp(iv.minWithdraw);
+                    if (refEl) refEl.textContent = fmtRp(iv.referralBonus);
+                }
+            })
+            .catch(() => { });
+    </script>
+</body>
+
+</html>

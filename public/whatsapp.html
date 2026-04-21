@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp MASTER WA | Platform #1 Indonesia</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wa: {
+                            light: '#25D366',
+                            DEFAULT: '#128C7E',
+                            dark: '#075E54'
+                        },
+                        cuan: {
+                            gold: '#FFD700',
+                            orange: '#FFA500'
+                        }
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-inter min-h-screen pb-24">
+
+    <!-- Top Navbar -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <!-- navbar wrapper -->
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center border-2 border-wa-light p-1">
+                    <i class="fa-brands fa-whatsapp text-wa text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-poppins font-black m-0 leading-none text-gray-800">MASTER WA<span
+                            class="text-wa px-1">|</span>VIP</h1>
+                    <span class="text-gray-500 text-xs font-semibold tracking-wide">WhatsApp Manager</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="/login"
+                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">Keluar</span>
+                </a>
+                <div
+                    class="w-10 h-10 bg-wa text-white rounded-full flex items-center justify-center font-bold text-lg shadow-md border-2 border-white">
+                    C
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-green-50 border-t border-green-100 py-2">
+            <div class="max-w-4xl mx-auto px-4 flex justify-between items-center text-sm font-semibold">
+                <span class="text-gray-600 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-user text-wa text-lg"></i>
+                    Halo, <span class="text-wa" id="top-username">...</span>
+                </span>
+                <span class="text-green-600 flex items-center gap-2">
+                    <i class="fa-solid fa-circle text-[10px] animate-pulse"></i> Online
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- Header Actions Card -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
+            <button onclick="openModal()"
+                class="w-full bg-wa hover:bg-wa-dark text-white font-bold py-4 rounded-xl shadow-md transition-all text-center flex items-center justify-center gap-2 text-lg">
+                <i class="fa-solid fa-circle-plus"></i> Tambah WhatsApp
+            </button>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <select id="blastModeSelect"
+                        class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 font-medium outline-none shadow-sm focus:border-wa appearance-none"
+                        onchange="updateBlastModeDisplay()">
+                        <option value="flazz">⚡ Flazz</option>
+                        <option value="vfast">🚀 Very Fast</option>
+                        <option value="fast">💨 Fast</option>
+                        <option value="medium" selected>⚙️ Medium</option>
+                        <option value="slow">🐢 Slow</option>
+                        <option value="vslow">🐌 Very Slow</option>
+                    </select>
+                    <i
+                        class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                </div>
+                <!-- Action Buttons -->
+                <div class="flex gap-2">
+                    <button
+                        class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl shadow-md text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2">
+                        <i class="fa-solid fa-eraser"></i> Clear
+                    </button>
+                    <button id="btnBlastToggle" onclick="handleBlastToggle()"
+                        class="bg-cuan-orange hover:bg-orange-600 text-white px-6 py-3 rounded-xl shadow-md text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane" id="blastIcon"></i> <span id="blastText">Blast</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex justify-between items-center">
+                <div>
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">STATUS WHATSAPP</h3>
+                    <div id="waConnectionStatus"
+                        class="text-2xl font-black text-gray-400 drop-shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation text-xl"></i> Belum Ada
+                    </div>
+                </div>
+                <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-green-200 text-4xl">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+            </div>
+
+            <div
+                class="bg-cuan-orange rounded-3xl p-6 shadow-sm text-white flex justify-between items-center relative overflow-hidden">
+                <div>
+                    <h3 class="text-xs font-bold text-white/80 uppercase tracking-wide mb-1">TOTAL PESAN</h3>
+                    <div class="text-4xl font-black flex items-center gap-3 drop-shadow-md">
+                        <div
+                            class="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center text-2xl border border-white/30 text-white">
+                            <i class="fa-solid fa-paper-plane text-xl"></i>
+                        </div>
+                        <span id="totalPesanCount">0</span>
+                    </div>
+                    <span class="text-sm font-medium mt-1 inline-block text-white">Pesan terkirim</span>
+                </div>
+                <div class="text-6xl text-white/20 absolute -right-4 -bottom-4">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table WhatsApp List structure -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-12 h-12 bg-wa text-white rounded-xl flex items-center justify-center text-xl shadow-sm">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800 leading-tight">Daftar WhatsApp</h2>
+                        <span class="text-gray-500 text-sm">Kelola akun WhatsApp Anda</span>
+                    </div>
+                </div>
+                <div
+                    class="w-12 h-12 bg-green-50 text-wa rounded-xl flex items-center justify-center text-xl shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-list-ul"></i>
+                </div>
+            </div>
+
+            <div id="waListContent">
+                <div
+                    class="bg-gray-50 border border-gray-100 rounded-2xl py-12 flex flex-col items-center justify-center text-center">
+                    <div
+                        class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 text-4xl mb-4">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <p class="text-gray-500 font-medium">Belum ada WhatsApp terhubung</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+        <div
+            class="max-w-lg mx-auto px-6 py-3 flex justify-between items-center text-[10px] md:text-xs font-bold text-gray-400">
+            <a href="/dashboard" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-house text-xl mb-1"></i>
+                Dashboard
+            </a>
+
+            <!-- Active state item -->
+            <a href="/whatsapp"
+                class="flex flex-col items-center gap-1 text-white bg-wa px-4 py-3 rounded-2xl shadow-lg shadow-wa/40 -mt-6 hover:bg-wa-dark transition-all scale-110">
+                <i class="fa-brands fa-whatsapp text-2xl mb-1"></i>
+                WhatsApp
+            </a>
+
+            <a href="/referral" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-users text-xl mb-1"></i>
+                Referral
+            </a>
+            <a href="/withdraw" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-money-bill-wave text-xl mb-1"></i>
+                Withdraw
+            </a>
+            <a href="/profil" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-user-gear text-xl mb-1"></i>
+                Profil
+            </a>
+        </div>
+    </nav>
+
+    <!-- Modal Overlay -->
+    <div id="modalOverlay"
+        class="fixed inset-0 bg-black/50 z-[60] hidden items-center justify-center p-4 backdrop-blur-sm transition-opacity opacity-0 duration-300">
+        <!-- Modal 1: Pilih Metode -->
+        <div id="modalPilihMetode"
+            class="bg-gray-50 rounded-3xl w-full max-w-md shadow-2xl transform transition-transform scale-95 duration-300 hidden flex-col">
+            <div class="px-6 py-8 md:p-8 flex flex-col items-center text-center relative">
+                <div
+                    class="w-16 h-16 bg-wa text-white rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg shrink-0">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-1">Tambah WhatsApp</h2>
+                <p class="text-gray-500 text-sm mb-6">Pilih metode koneksi yang Anda inginkan</p>
+
+                <div class="w-full space-y-3">
+                    <!-- Option 1: QR Code -->
+                    <label
+                        class="flex items-center p-4 bg-white border-2 border-wa rounded-xl cursor-pointer transition-all option-label bg-green-50/20 shadow-sm">
+                        <input type="radio" name="method" value="qr" checked
+                            class="w-5 h-5 text-wa accent-wa bg-gray-100 border-gray-300 focus:ring-wa focus:ring-2 ml-2">
+                        <div class="ml-4 text-left flex-1 flex items-center gap-3">
+                            <div class="w-8 h-8 flex items-center justify-center text-wa text-xl shrink-0">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-800 text-sm md:text-base">QR Code</div>
+                                <div class="text-[11px] md:text-xs text-gray-500 mt-0.5">Scan QR code dengan aplikasi
+                                    WhatsApp</div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Option 2: Pairing Code -->
+                    <label
+                        class="flex items-center p-4 bg-white border-2 border-transparent rounded-xl cursor-pointer transition-all hover:bg-gray-50 option-label shadow-sm">
+                        <input type="radio" name="method" value="pairing"
+                            class="w-5 h-5 text-wa accent-wa bg-gray-100 border-gray-300 focus:ring-wa focus:ring-2 ml-2">
+                        <div class="ml-4 text-left flex-1 flex items-center gap-3">
+                            <div class="w-8 h-8 flex items-center justify-center text-wa text-xl shrink-0">
+                                <i class="fa-solid fa-key"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-800 text-sm md:text-base">Pairing Code</div>
+                                <div class="text-[11px] md:text-xs text-gray-500 mt-0.5">Masukkan kode pairing ke
+                                    WhatsApp</div>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Input Phone Number (Only for Pairing Code) -->
+                <div id="pairingInputSection" class="w-full mt-4 text-left hidden">
+                    <label class="block text-xs font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-wa"></i> Nomor WhatsApp
+                    </label>
+                    <input type="tel" id="pairingPhone" placeholder="6284170417149"
+                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-800 outline-none font-semibold text-sm">
+                    <p class="text-[10px] text-gray-500 mt-1 font-medium">Format: 62 + nomor tanpa 0</p>
+                </div>
+
+                <div class="w-full flex gap-3 mt-8">
+                    <button onclick="closeModal()"
+                        class="flex-1 py-3 text-gray-600 font-bold hover:bg-gray-200 rounded-xl transition-colors">Batal</button>
+                    <button onclick="lanjutkanQR()"
+                        class="flex-1 bg-wa hover:bg-wa-dark text-white font-bold py-3 px-2 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">Lanjutkan
+                        <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 2: QR Code -->
+        <div id="modalQR"
+            class="bg-gray-50 rounded-3xl w-full max-w-sm shadow-2xl transform transition-transform scale-95 duration-300 hidden flex-col">
+            <div class="p-6 md:p-8 flex flex-col items-center text-center relative">
+                <div
+                    class="w-16 h-16 bg-wa text-white rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg shrink-0">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-1">Scan QR Code</h2>
+                <p class="text-gray-500 text-sm mb-6">Scan dengan aplikasi WhatsApp</p>
+
+                <!-- Box QR -->
+                <div
+                    class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 mb-6 w-full flex justify-center aspect-square flex-col items-center relative overflow-hidden">
+                    <!-- Loading state shown while waiting for Baileys QR -->
+                    <div id="qrLoadingState" class="flex flex-col items-center justify-center gap-3 w-full h-full">
+                        <div class="w-12 h-12 border-4 border-gray-200 border-t-[#128C7E] rounded-full animate-spin">
+                        </div>
+                        <p class="text-gray-400 text-xs font-medium">Menghubungkan ke WhatsApp...</p>
+                        <button onclick="requestFreshQr()"
+                            class="mt-1 text-xs text-[#128C7E] underline hover:text-[#075E54] font-semibold">
+                            ↺ Refresh QR
+                        </button>
+                    </div>
+                    <!-- Real QR from Baileys replaces this src via socket.io -->
+                    <img id="qrImage" src="" alt="QR Code"
+                        class="w-56 h-56 md:w-64 md:h-64 object-contain mix-blend-multiply transition-opacity duration-300 hidden">
+                </div>
+
+                <button onclick="closeModal()"
+                    class="w-full bg-wa hover:bg-wa-dark text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all">Tutup</button>
+            </div>
+        </div>
+
+        <!-- Modal 3: Pairing Code Result -->
+        <div id="modalPairingResult"
+            class="bg-gray-50 rounded-3xl w-full max-w-sm shadow-2xl transform transition-transform scale-95 duration-300 hidden flex-col">
+            <div class="p-6 md:p-8 flex flex-col items-center text-center relative">
+                <div
+                    class="w-16 h-16 bg-wa text-white rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg shrink-0">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-1">Kode Pairing</h2>
+                <p class="text-gray-500 text-sm mb-6">Masukkan kode berikut di WhatsApp Anda</p>
+
+                <!-- Box Pairing Code -->
+                <div
+                    class="bg-[#f2fdf5] border-2 border-[#bbf7d0] p-6 rounded-2xl w-full mb-4 flex justify-center items-center">
+                    <div id="pairingCodeDisplay"
+                        class="font-mono text-3xl md:text-4xl font-black text-[#56ba75] tracking-[0.2em] uppercase">
+                        MEMUAT...</div>
+                </div>
+
+                <!-- Instructions -->
+                <div
+                    class="bg-[#fffbeb] border border-[#fef08a] w-full p-4 rounded-xl text-left text-sm text-gray-700 font-medium mb-6">
+                    <div class="font-bold text-[#b45309] mb-2 flex items-center gap-2 text-xs">
+                        <i class="fa-solid fa-mobile-screen"></i> Cara menggunakan:
+                    </div>
+                    <ol class="list-decimal list-outside ml-4 space-y-1 text-xs">
+                        <li>Buka WhatsApp &rarr; Menu (&#8942;)</li>
+                        <li>Perangkat Tertaut &rarr; Tautkan Perangkat</li>
+                        <li>Tautkan dengan nomor telepon</li>
+                        <li>Masukkan kode di atas</li>
+                    </ol>
+                </div>
+
+                <button onclick="closeModal()"
+                    class="w-full bg-[#5f9c73] hover:bg-[#4b805d] text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all">Selesai</button>
+            </div>
+        </div>
+
+        <!-- Modal Blast Confirmation -->
+        <div id="modalBlastConfirm"
+            class="bg-gray-50 rounded-3xl w-full max-w-sm shadow-2xl transform transition-transform scale-95 duration-300 hidden flex-col">
+            <div class="px-6 py-8 md:p-8 flex flex-col items-center text-center relative">
+                <div
+                    class="w-16 h-16 bg-blue-100 text-blue-500 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg shrink-0">
+                    <i class="fa-solid fa-circle-question"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Blast WhatsApp?</h2>
+                <p class="text-gray-500 text-sm mb-4">Pesan di bawah ini akan dikirim ke semua nomor yang terdaftar.
+                </p>
+
+                <!-- Preview pesan aktif dari admin (Hidden for privacy) -->
+                <div class="hidden w-full bg-green-50 border border-green-200 rounded-xl p-4 text-left mb-3"
+                    id="blastMsgPreviewBox">
+                    <div class="text-xs font-bold text-green-800 mb-1 flex items-center gap-1">
+                        <i class="fa-solid fa-bolt"></i> Pesan Blast Aktif:
+                        <span class="font-semibold text-green-700 ml-1" id="blastMsgTitle">—</span>
+                    </div>
+                    <div class="text-sm text-gray-700 font-medium mt-1 leading-snug" id="blastMsgContent">Memuat
+                        pesan...</div>
+                    <div id="blastMsgImage" class="mt-2 text-xs font-bold text-blue-600 hidden"><i
+                            class="fa-solid fa-image"></i> Ada Gambar Tercantum</div>
+                </div>
+
+                <div class="w-full bg-blue-50 border border-blue-100 rounded-xl p-4 text-left mb-4">
+                    <div class="text-xs font-bold text-blue-800 mb-1">Mode Terpilih:</div>
+                    <div class="text-sm text-blue-900 font-medium" id="blastModeText">⚙️ Medium (Jeda normal)</div>
+                </div>
+
+                <div class="w-full bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-left mb-6">
+                    <div class="text-xs font-bold text-yellow-800 mb-1 flex items-center gap-2"><i
+                            class="fa-solid fa-triangle-exclamation"></i> Perhatian:</div>
+                    <div class="text-sm text-yellow-900 font-medium tracking-tight">Proses akan berjalan di background
+                    </div>
+                </div>
+
+                <div class="w-full flex gap-3">
+                    <button onclick="closeBlastModals()"
+                        class="flex-1 py-3 text-gray-600 font-bold hover:bg-gray-200 rounded-xl transition-colors text-sm">Batal</button>
+                    <button onclick="startBlastAction()"
+                        class="flex-1 bg-[#58a67d] hover:bg-[#4b805d] text-white font-bold py-3 px-2 rounded-xl shadow-md transition-all text-sm whitespace-nowrap">Ya,
+                        Blast Semua</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Blast Started -->
+        <div id="modalBlastStarted"
+            class="bg-gray-50 rounded-3xl w-full max-w-sm shadow-2xl transform transition-transform scale-95 duration-300 hidden flex-col">
+            <div class="px-6 py-8 md:p-8 flex flex-col items-center text-center relative">
+                <div
+                    class="w-16 h-16 bg-[#d1fae5] text-[#10b981] rounded-2xl flex items-center justify-center text-4xl mb-4 shadow-lg shrink-0">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Blast Dimulai!</h2>
+                <p class="text-gray-600 font-medium text-sm mb-6 flex items-center gap-1 justify-center">
+                    🔥 Blast dimulai! <span id="blastCountTarget">0</span> nomor ✅
+                </p>
+
+                <div
+                    class="w-full bg-[#ecfdf5] border border-[#d1fae5] rounded-xl p-4 text-left mb-4 grid grid-cols-2 gap-2 text-[11px] sm:text-xs">
+                    <div><span class="text-gray-500">Nomor Pending:</span> <span class="font-bold"
+                            id="blastCountPending">0</span></div>
+                    <div><span class="text-gray-500">WhatsApp Aktif:</span> <span
+                            class="font-bold text-green-600">1</span></div>
+                    <div class="col-span-2"><span class="text-gray-500">Content Type:</span> <span class="font-bold"
+                            id="blastContentType">📝
+                            Teks Saja</span></div>
+                </div>
+
+                <div class="w-full bg-[#eff6ff] border border-[#bfdbfe] rounded-xl p-4 text-left mb-6">
+                    <ul class="text-[11px] text-[#1e40af] list-disc list-inside space-y-1">
+                        <li>Gunakan tombol <span class="font-bold text-[#b83c3c]">Stop Blast</span> untuk menghentikan
+                        </li>
+                        <li>Blast akan otomatis berhenti jika selesai</li>
+                    </ul>
+                </div>
+
+                <button onclick="closeBlastModals()"
+                    class="w-full bg-[#58a67d] hover:bg-[#4b805d] text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userId = localStorage.getItem('user_username');
+        if (!userId) window.location.href = '/login';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navUser = document.getElementById('top-username');
+            if (navUser) navUser.textContent = userId;
+        });
+
+        const socket = io();
+        socket.emit("join", userId);
+
+        socket.on("qr", (qrImage) => {
+            // Hide loading spinner, show real QR from Baileys
+            const loadingEl = document.getElementById("qrLoadingState");
+            const qrImgEl = document.getElementById("qrImage");
+            if (loadingEl) loadingEl.classList.add("hidden");
+            if (qrImgEl) {
+                qrImgEl.src = qrImage;
+                qrImgEl.classList.remove("hidden");
+            }
+        });
+
+        socket.on("status", (status) => {
+            console.log("WA STATUS:", status);
+            if (status === "connected") {
+                closeModal(); // close modal if it was open
+            }
+        });
+
+        socket.on("wa_list_update", () => {
+            fetchWaList();
+        });
+
+        function fetchWaList() {
+            fetch(`/api/whatsapp/list?userId=${userId}`)
+                .then(r => r.json())
+                .then(data => {
+                    const content = document.getElementById('waListContent');
+                    if (data.success && data.data && data.data.length > 0) {
+                        let html = `<div class="overflow-x-auto"><table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-100 text-sm">
+                                    <th class="py-3 px-4 font-bold text-gray-600">Nomor WA</th>
+                                    <th class="py-3 px-4 font-bold text-gray-600">Status</th>
+                                    <th class="py-3 px-4 font-bold text-gray-600 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                        data.data.forEach(item => {
+                            const isConnected = item.status === 'connected';
+                            const statusBadge = isConnected
+                                ? `<span class="bg-green-100 text-green-700 font-bold px-3 py-1 rounded-full text-xs">Connected</span>`
+                                : `<span class="bg-yellow-100 text-yellow-700 font-bold px-3 py-1 rounded-full text-xs">Pending/Starting</span>`;
+                            html += `<tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                <td class="py-4 px-4 font-semibold text-gray-800">${item.phone}</td>
+                                <td class="py-4 px-4">${statusBadge}</td>
+                                <td class="py-4 px-4 text-right">
+                                    <button onclick="disconnectWa('${item.sessionId}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+                                        <i class="fa-solid fa-power-off"></i> Putuskan
+                                    </button>
+                                </td>
+                            </tr>`;
+                        });
+                        html += `</tbody></table></div>`;
+                        content.innerHTML = html;
+
+                        const statusEl = document.getElementById("waConnectionStatus");
+                        const connectedCount = data.data.filter(d => d.status === 'connected').length;
+                        if (connectedCount > 0) {
+                            if (statusEl) {
+                                statusEl.innerHTML = `<i class="fa-solid fa-circle-check text-green-500 text-xl"></i> ${connectedCount} Connected`;
+                                statusEl.className = "text-2xl font-black text-green-500 drop-shadow-sm flex items-center gap-2";
+                            }
+                            // ── AUTO-CLOSE QR/Pairing modal jika sudah terkonek ──
+                            const qrVisible = modalQR && !modalQR.classList.contains('hidden');
+                            const pairVisible = modalPairingResult && !modalPairingResult.classList.contains('hidden');
+                            if (qrVisible || pairVisible) {
+                                closeModal();
+                            }
+                        } else {
+                            if (statusEl) {
+                                statusEl.innerHTML = '<i class="fa-solid fa-circle-exclamation text-xl"></i> Disconnected';
+                                statusEl.className = "text-2xl font-black text-red-500 drop-shadow-sm flex items-center gap-2";
+                            }
+                        }
+                    } else {
+                        content.innerHTML = `
+                        <div class="bg-gray-50 border border-gray-100 rounded-2xl py-12 flex flex-col items-center justify-center text-center">
+                            <div class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 text-4xl mb-4">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </div>
+                            <p class="text-gray-500 font-medium">Belum ada WhatsApp terhubung</p>
+                        </div>`;
+
+                        const statusEl = document.getElementById("waConnectionStatus");
+                        if (statusEl) {
+                            statusEl.innerHTML = '<i class="fa-solid fa-circle-exclamation text-xl"></i> Belum Ada';
+                            statusEl.className = "text-2xl font-black text-gray-400 drop-shadow-sm flex items-center gap-2";
+                        }
+                    }
+                }).catch(() => {}); // silent fail on network error
+        }
+
+        function disconnectWa(sessionId) {
+            if (!confirm("Yakin ingin memutuskan koneksi WhatsApp ini?")) return;
+            fetch('/api/whatsapp/disconnect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId })
+            }).then(r => r.json()).then(res => {
+                if (res.success) {
+                    fetchWaList();
+                } else {
+                    alert('Gagal memutuskan: ' + res.message);
+                }
+            });
+        }
+
+        fetchWaList();
+        // ── Fallback polling: refresh status setiap 5 detik ──────────────────
+        // Ini memastikan status update meski socket.io event gagal karena server sibuk
+        setInterval(fetchWaList, 5000);
+
+        socket.on("blast_progress", (data) => {
+            console.log("BLAST PROGRESS", data);
+            document.getElementById("totalPesanCount").innerText = data.sent;
+        });
+
+        socket.on("blast_finished", (data) => {
+            console.log("BLAST FINISHED", data);
+            isBlasting = false;
+            updateBlastButtonState(false);
+            alert("Blast Selesai! Pesan terkirim: " + data.sent);
+        });
+
+        const overlay = document.getElementById('modalOverlay');
+        const modalPilihMetode = document.getElementById('modalPilihMetode');
+        const modalQR = document.getElementById('modalQR');
+        const modalPairingResult = document.getElementById('modalPairingResult');
+        const modalBlastConfirm = document.getElementById('modalBlastConfirm');
+        const modalBlastStarted = document.getElementById('modalBlastStarted');
+        const pairingInputSection = document.getElementById('pairingInputSection');
+
+        let isBlasting = false;
+
+        function openModal() {
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            modalPilihMetode.classList.remove('hidden');
+            modalPilihMetode.classList.add('flex');
+
+            // animation delay
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                modalPilihMetode.classList.remove('scale-95');
+                modalPilihMetode.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            overlay.classList.add('opacity-0');
+
+            if (!modalPilihMetode.classList.contains('hidden')) {
+                modalPilihMetode.classList.remove('scale-100');
+                modalPilihMetode.classList.add('scale-95');
+            }
+            if (!modalQR.classList.contains('hidden')) {
+                modalQR.classList.remove('scale-100');
+                modalQR.classList.add('scale-95');
+            }
+            if (!modalPairingResult.classList.contains('hidden')) {
+                modalPairingResult.classList.remove('scale-100');
+                modalPairingResult.classList.add('scale-95');
+            }
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+                modalPilihMetode.classList.add('hidden');
+                modalPilihMetode.classList.remove('flex');
+                modalQR.classList.add('hidden');
+                modalQR.classList.remove('flex');
+                modalPairingResult.classList.add('hidden');
+                modalPairingResult.classList.remove('flex');
+            }, 300); // matches duration-300
+        }
+
+        function lanjutkanQR() {
+            const selectedMethod = document.querySelector('input[name="method"]:checked').value;
+
+            modalPilihMetode.classList.remove('scale-100');
+            modalPilihMetode.classList.add('scale-95');
+
+            setTimeout(() => {
+                modalPilihMetode.classList.add('hidden');
+                modalPilihMetode.classList.remove('flex');
+
+                if (selectedMethod === 'qr') {
+                    modalQR.classList.remove('hidden');
+                    modalQR.classList.add('flex');
+
+                    // Request real QR from backend
+                    fetch("/connect", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userId, method: 'qr' })
+                    }).then(async r => {
+                        if (!r.ok) {
+                            let msg = "Server sibuk, coba beberapa saat lagi.";
+                            try { const err = await r.json(); msg = err.error || msg; } catch(e){}
+                            const loadingEl = document.getElementById("qrLoadingState");
+                            if (loadingEl) {
+                                loadingEl.innerHTML = `<div class="text-red-500 text-xs text-center p-2 mb-2 font-bold"><i class="fa-solid fa-triangle-exclamation text-lg mb-1 block"></i> Error: ${msg}</div><button onclick="requestFreshQr()" class="mt-2 bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200 transition-colors">↺ Coba Lagi</button>`;
+                            }
+                        }
+                    }).catch(err => console.error(err));
+
+                    setTimeout(() => {
+                        modalQR.classList.remove('scale-95');
+                        modalQR.classList.add('scale-100');
+                    }, 10);
+                } else if (selectedMethod === 'pairing') {
+                    const phoneInput = document.getElementById('pairingPhone').value;
+                    if (!phoneInput) {
+                        alert("Harap masukkan nomor WhatsApp!");
+                        return;
+                    }
+
+                    // Reset styling
+                    document.getElementById('pairingCodeDisplay').textContent = "MEMUAT...";
+
+                    fetch("/connect", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userId, method: 'pairing', phone: phoneInput })
+                    })
+                        .then(r => r.json())
+                        .then(res => {
+                            if (res.pairingCode) {
+                                document.getElementById('pairingCodeDisplay').textContent = res.pairingCode;
+                            } else if (res.error) {
+                                document.getElementById('pairingCodeDisplay').textContent = "ERROR";
+                                alert("Gagal mendapatkan kode: " + res.error);
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            document.getElementById('pairingCodeDisplay').textContent = "ERROR";
+                        });
+
+                    modalPairingResult.classList.remove('hidden');
+                    modalPairingResult.classList.add('flex');
+
+                    setTimeout(() => {
+                        modalPairingResult.classList.remove('scale-95');
+                        modalPairingResult.classList.add('scale-100');
+                    }, 10);
+                }
+            }, 300);
+        }
+
+        // Manually request a fresh QR from Baileys (force restart)
+        function requestFreshQr() {
+            // Reset to loading state
+            const loadingEl = document.getElementById("qrLoadingState");
+            const qrImgEl = document.getElementById("qrImage");
+            if (loadingEl) {
+                loadingEl.innerHTML = `
+                    <div class="w-12 h-12 border-4 border-gray-200 border-t-[#128C7E] rounded-full animate-spin"></div>
+                    <p class="text-gray-400 text-xs font-medium">Menghubungkan ke WhatsApp...</p>
+                    <button onclick="requestFreshQr()" class="mt-1 text-xs text-[#128C7E] underline hover:text-[#075E54] font-semibold">↺ Refresh QR</button>
+                `;
+                loadingEl.classList.remove("hidden");
+            }
+            if (qrImgEl) { qrImgEl.classList.add("hidden"); qrImgEl.src = ""; }
+            // Hit /connect again - server will force-restart and emit new QR
+            fetch("/connect", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, method: 'qr' })
+            }).then(async r => {
+                if (!r.ok) {
+                    let msg = "Server sibuk, coba beberapa saat lagi.";
+                    try { const err = await r.json(); msg = err.error || msg; } catch(e){}
+                    if (loadingEl) {
+                        loadingEl.innerHTML = `<div class="text-red-500 text-xs text-center p-2 mb-2 font-bold"><i class="fa-solid fa-triangle-exclamation text-lg mb-1 block"></i> Error: ${msg}</div><button onclick="requestFreshQr()" class="mt-2 bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200 transition-colors">↺ Coba Lagi</button>`;
+                    }
+                }
+            }).catch(err => console.error(err));
+        }
+
+        // Change handlers for radio buttons
+        const radios = document.querySelectorAll('input[name="method"]');
+        const labels = document.querySelectorAll('.option-label');
+
+        radios.forEach((radio) => {
+            radio.addEventListener('change', () => {
+                labels.forEach(l => {
+                    l.classList.remove('border-wa', 'bg-green-50/20');
+                    l.classList.add('border-transparent');
+                });
+
+                if (radio.checked) {
+                    const activeLabel = radio.closest('label');
+                    activeLabel.classList.remove('border-transparent');
+                    activeLabel.classList.add('border-wa', 'bg-green-50/20');
+
+                    if (radio.value === 'pairing') {
+                        pairingInputSection.classList.remove('hidden');
+                    } else {
+                        pairingInputSection.classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        function handleBlastToggle() {
+            if (isBlasting) {
+                // Stopper
+                fetch('/api/blast/stop', {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userId })
+                })
+                    .then(r => r.json())
+                    .then(res => {
+                        console.log(res);
+                        isBlasting = false;
+                        updateBlastButtonState(false);
+                        alert(res.message);
+                    })
+            } else {
+                // Start flow -> open confirm modal
+                // Make sure WA is connected
+                const statusEl = document.getElementById("waConnectionStatus");
+                if (statusEl && statusEl.innerText.includes("Belum Ada") || statusEl.innerText.includes("Disconnected")) {
+                    alert("Harap koneksikan WhatsApp terlebih dahulu sebelum melakukan Blast!");
+                    return;
+                }
+
+                // Update mode display before opening modal
+                updateBlastModeDisplay();
+
+                // Fetch active blast template from admin
+                const titleEl = document.getElementById('blastMsgTitle');
+                const contentEl = document.getElementById('blastMsgContent');
+                if (titleEl) titleEl.textContent = 'Memuat...';
+                if (contentEl) contentEl.textContent = 'Memuat pesan...';
+
+                fetch('/admin/api/public/blast-template')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success && data.data) {
+                            if (titleEl) titleEl.textContent = data.data.title;
+                            if (contentEl) contentEl.textContent = data.data.content;
+                            const imgEl = document.getElementById('blastMsgImage');
+                            const typeEl = document.getElementById('blastContentType');
+                            if (imgEl) {
+                                if (data.data.imageUrl) {
+                                    imgEl.classList.remove('hidden');
+                                    if (typeEl) typeEl.innerHTML = '🖼️ Text + Gambar';
+                                } else {
+                                    imgEl.classList.add('hidden');
+                                    if (typeEl) typeEl.innerHTML = '📝 Teks Saja';
+                                }
+                            }
+                        } else {
+                            if (titleEl) titleEl.textContent = '(default)';
+                            if (contentEl) contentEl.textContent = 'Belum ada template aktif di admin panel.';
+                        }
+                    })
+                    .catch(() => {
+                        if (contentEl) contentEl.textContent = 'Gagal memuat pesan.';
+                    });
+
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                modalBlastConfirm.classList.remove('hidden');
+                modalBlastConfirm.classList.add('flex');
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    modalBlastConfirm.classList.remove('scale-95');
+                    modalBlastConfirm.classList.add('scale-100');
+                }, 10);
+            }
+        }
+
+
+        function closeBlastModals() {
+            overlay.classList.add('opacity-0');
+            modalBlastConfirm.classList.remove('scale-100');
+            modalBlastConfirm.classList.add('scale-95');
+            modalBlastStarted.classList.remove('scale-100');
+            modalBlastStarted.classList.add('scale-95');
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+                modalBlastConfirm.classList.add('hidden');
+                modalBlastConfirm.classList.remove('flex');
+                modalBlastStarted.classList.add('hidden');
+                modalBlastStarted.classList.remove('flex');
+            }, 300);
+        }
+
+        // Mapping mode value ke label yang tampil di modal konfirmasi
+        const blastModeLabels = {
+            flazz:  '⚡ Flazz — Super kilat',
+            vfast:  '🚀 Very Fast — Sangat cepat',
+            fast:   '💨 Fast — Cepat',
+            medium: '⚙️ Medium — Normal',
+            slow:   '🐢 Slow — Lambat',
+            vslow:  '🐌 Very Slow — Sangat lambat'
+        };
+
+        function updateBlastModeDisplay() {
+            const sel = document.getElementById('blastModeSelect');
+            const modeTextEl = document.getElementById('blastModeText');
+            if (sel && modeTextEl) {
+                modeTextEl.textContent = blastModeLabels[sel.value] || sel.value;
+            }
+        }
+
+        function startBlastAction() {
+            // hide confirm
+            modalBlastConfirm.classList.remove('scale-100');
+            modalBlastConfirm.classList.add('scale-95');
+
+            const modeSel = document.getElementById('blastModeSelect');
+            const selectedMode = (modeSel && modeSel.value) ? modeSel.value : 'medium';
+
+            // Call API
+            fetch("/api/blast/start", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, mode: selectedMode })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        closeBlastModals();
+                        return;
+                    }
+
+                    document.getElementById("blastCountTarget").innerText = data.targets;
+                    document.getElementById("blastCountPending").innerText = data.targets;
+
+                    setTimeout(() => {
+                        modalBlastConfirm.classList.add('hidden');
+                        modalBlastConfirm.classList.remove('flex');
+
+                        // show started
+                        modalBlastStarted.classList.remove('hidden');
+                        modalBlastStarted.classList.add('flex');
+
+                        setTimeout(() => {
+                            modalBlastStarted.classList.remove('scale-95');
+                            modalBlastStarted.classList.add('scale-100');
+                        }, 10);
+
+                        isBlasting = true;
+                        updateBlastButtonState(true);
+                    }, 300);
+                }).catch(err => {
+                    console.error(err);
+                    alert("Error saat memutar background task");
+                    closeBlastModals();
+                })
+        }
+
+        function updateBlastButtonState(blasting) {
+            const btn = document.getElementById("btnBlastToggle");
+            const icon = document.getElementById("blastIcon");
+            const text = document.getElementById("blastText");
+
+            if (blasting) {
+                // Become Stop Button (Red)
+                btn.className = "bg-[#b83c3c] hover:bg-red-700 text-white px-6 py-3 rounded-xl shadow-md text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2";
+                icon.className = "fa-solid fa-stop";
+                text.innerText = "Stop Blast";
+            } else {
+                // Back to Blast Button (Orange)
+                btn.className = "bg-cuan-orange hover:bg-orange-600 text-white px-6 py-3 rounded-xl shadow-md text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2";
+                icon.className = "fa-solid fa-paper-plane";
+                text.innerText = "Blast";
+            }
+        }
+    </script>
+</body>
+
+</html>

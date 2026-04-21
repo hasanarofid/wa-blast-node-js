@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: setorwa-app
+    restart: always
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./data:/app/data
+      - ./sessions:/app/sessions
+      - ./public/uploads:/app/public/uploads
+    environment:
+      - PORT=3001
+      - TZ=Asia/Jakarta
+      - NODE_ENV=production

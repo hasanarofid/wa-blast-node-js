@@ -1,0 +1,20 @@
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:259:5
+Error: Cannot find module 'pino'
+Require stack:
+- /var/www/setorwa/services/waService.js
+- /var/www/setorwa/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:182:18)
+    at createInstance (/var/www/setorwa/services/waService.js:38:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/www/setorwa/server.js:259:5

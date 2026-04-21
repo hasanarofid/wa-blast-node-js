@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil MASTER WA | Platform #1 Indonesia</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wa: {
+                            light: '#25D366',
+                            DEFAULT: '#128C7E',
+                            dark: '#075E54'
+                        },
+                        cuan: {
+                            gold: '#FFD700',
+                            orange: '#FFA500'
+                        }
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-inter min-h-screen pb-24">
+
+    <!-- Top Navbar -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center border-2 border-wa-light p-1">
+                    <i class="fa-brands fa-whatsapp text-wa text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-poppins font-black m-0 leading-none text-gray-800">MASTER WA<span
+                            class="text-wa px-1">|</span>VIP</h1>
+                    <span class="text-gray-500 text-xs font-semibold tracking-wide">Profil Saya</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="/login"
+                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">Keluar</span>
+                </a>
+                <div class="w-10 h-10 bg-wa text-white rounded-full flex items-center justify-center font-bold text-lg shadow-md border-2 border-white"
+                    id="nav-avatar">
+                    ?
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-green-50 border-t border-green-100 py-2">
+            <div class="max-w-4xl mx-auto px-4 flex justify-between items-center text-sm font-semibold">
+                <span class="text-gray-600 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-user text-wa text-lg"></i>
+                    Halo, <span class="text-wa" id="nav-username">...</span>
+                </span>
+                <span class="text-green-600 flex items-center gap-2">
+                    <i class="fa-solid fa-circle text-[10px] animate-pulse"></i> Online
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- Info Akun -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-12 h-12 bg-blue-500 text-white rounded-xl flex items-center justify-center text-xl shadow-md">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800 leading-tight">Informasi Akun</h2>
+                    <span class="text-gray-500 text-sm">Detail profil Anda</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-green-50/50 border border-green-100 py-3 px-4 rounded-xl">
+                    <label class="block text-xs font-bold text-wa mb-1 uppercase"><i
+                            class="fa-solid fa-user-tag mb-1"></i> Username</label>
+                    <div class="font-bold text-gray-800 text-lg mb-1" id="profil-username">...</div>
+                    <span class="text-xs text-gray-400 font-medium"><i class="fa-solid fa-circle-info"></i> Username
+                        tidak dapat diubah</span>
+                </div>
+
+                <div class="bg-purple-50/50 border border-purple-100 py-3 px-4 rounded-xl relative overflow-hidden">
+                    <label class="block text-xs font-bold text-purple-600 mb-1 uppercase"><i
+                            class="fa-solid fa-calendar-check mb-1"></i> MEMBER SEJAK</label>
+                    <div class="font-bold text-gray-800 text-lg" id="profil-joined">...</div>
+                    <i
+                        class="fa-solid fa-trophy absolute -right-2 top-1/2 -translate-y-1/2 text-purple-200/50 text-5xl"></i>
+                    <i
+                        class="fa-solid fa-trophy absolute right-4 top-1/2 -translate-y-1/2 text-purple-600 text-xl hidden sm:block"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metode Penarikan -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-12 h-12 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-xl shadow-md">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800 leading-tight">Metode Penarikan</h2>
+                    <span class="text-gray-500 text-sm">Pilih metode untuk withdraw</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="text-sm font-bold text-gray-700 mb-3">Pilih Metode</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Selected state Bank (Default) -->
+                    <div id="btn-bank" onclick="selectMethod('bank')"
+                        class="border-2 border-wa bg-green-50 rounded-xl p-4 text-center cursor-pointer transition-colors relative">
+                        <i class="fa-solid fa-building-columns text-2xl text-gray-500 mb-2"></i>
+                        <h4 class="font-bold text-gray-800 text-sm">Bank</h4>
+                    </div>
+                    <!-- Unselected state Crypto -->
+                    <div id="btn-crypto" onclick="selectMethod('crypto')"
+                        class="border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer hover:border-gray-300 transition-colors">
+                        <i class="fa-brands fa-bitcoin text-2xl text-gray-400 mb-2"></i>
+                        <h4 class="font-bold text-gray-600 text-sm">Crypto</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Selected Input -->
+            <div id="form-bank" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-building-columns text-blue-600"></i> Nama Bank
+                    </label>
+                    <div class="relative">
+                        <select id="select-bank"
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-wa outline-none transition-all text-gray-600 font-medium text-sm appearance-none bg-white">
+                            <option>Pilih Bank</option>
+                            <option>BCA</option>
+                            <option>Mandiri</option>
+                            <option>BNI</option>
+                            <option>BRI</option>
+                            <option>DANA</option>
+                            <option>OVO</option>
+                            <option>GoPay</option>
+                        </select>
+                        <i
+                            class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-credit-card text-green-600"></i> Nomor Rekening / Akun
+                    </label>
+                    <input id="input-account-number" type="text" placeholder="Contoh: 1234567890"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-wa outline-none transition-all placeholder-gray-400 font-medium text-sm">
+                    <p class="text-xs text-gray-500 mt-2 flex items-center gap-1 font-medium">
+                        <i class="fa-solid fa-circle-info"></i> Hanya angka, tanpa spasi
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-user-pen text-purple-600"></i> Nama Pemilik Rekening
+                    </label>
+                    <input id="input-account-name" type="text" placeholder="Contoh: JOHN DOE"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-wa outline-none transition-all placeholder-gray-400 font-medium text-sm">
+                    <p class="text-xs text-gray-500 mt-2 flex items-center gap-1 font-medium">
+                        <i class="fa-solid fa-circle-info"></i> Sesuai nama di rekening
+                    </p>
+                </div>
+            </div>
+
+            <!-- Crypto Selected Input -->
+            <div id="form-crypto" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-bitcoin-sign text-orange-500"></i> Alamat USDT TRC20
+                    </label>
+                    <input id="input-crypto-address" type="text" placeholder="TXxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-wa outline-none transition-all placeholder-gray-400 font-medium text-sm">
+                    <p class="text-xs text-gray-500 mt-2 flex items-center gap-1 font-medium">
+                        <i class="fa-solid fa-circle-info"></i> Alamat harus dimulai dengan 'T' dan 34 karakter
+                    </p>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-800 font-medium">
+                    <span class="font-bold text-yellow-600"><i class="fa-solid fa-triangle-exclamation"></i>
+                        Perhatian:</span> Pastikan alamat USDT TRC20 benar. Kesalahan dapat menyebabkan kehilangan dana.
+                </div>
+            </div>
+
+            <!-- Action Buttons and Notice -->
+            <div class="mt-6">
+                <button id="btn-save-payment"
+                    class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-md transition-all text-center flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan Metode Penarikan
+                </button>
+                <div
+                    class="bg-blue-50 border border-blue-100 rounded-lg p-3 mt-4 text-xs text-blue-700 font-medium flex items-start gap-2">
+                    <i class="fa-solid fa-circle-info mt-0.5"></i>
+                    <span>Anda hanya dapat menyimpan satu metode. Menyimpan metode baru akan mengganti yang lama.</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Username Telegram Form Container -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-blue-50">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-12 h-12 bg-blue-500 text-white rounded-xl flex items-center justify-center text-xl shadow-md">
+                    <i class="fa-brands fa-telegram"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800 leading-tight">Username Telegram</h2>
+                    <span class="text-gray-500 text-sm">Hubungkan akun Telegram</span>
+                </div>
+            </div>
+
+            <!-- Form Username Telegram -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fa-brands fa-telegram text-blue-500"></i> Username Telegram
+                    </label>
+                    <div class="relative flex">
+                        <div
+                            class="bg-gray-50 border border-r-0 border-gray-200 rounded-l-xl px-4 py-3 font-semibold text-gray-500 flex items-center justify-center">
+                            @
+                        </div>
+                        <input type="text" placeholder="username"
+                            class="w-full px-4 py-3 rounded-r-xl border border-gray-200 focus:border-blue-400 outline-none transition-all placeholder-gray-400 font-medium text-sm z-10 relative left-[-1px]">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 flex items-center gap-1 font-medium">
+                        <i class="fa-solid fa-circle-info text-gray-400"></i> Masukkan username tanpa @
+                    </p>
+                </div>
+
+                <button
+                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 mt-4 rounded-xl shadow-md transition-all text-center flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Simpan Username Telegram
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Ubah Password Form Container (From Screenshot 21357) -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-red-50">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-12 h-12 bg-red-500 text-white rounded-xl flex items-center justify-center text-xl shadow-md">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800 leading-tight">Ubah Password</h2>
+                    <span class="text-gray-500 text-sm">Keamanan akun Anda</span>
+                </div>
+            </div>
+
+            <!-- Form Ubah Password -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-key text-yellow-600"></i> Password Lama
+                    </label>
+                    <input type="password" placeholder="Masukkan password lama"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-400 outline-none transition-all placeholder-gray-400 font-medium text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-lock text-green-600"></i> Password Baru
+                    </label>
+                    <input type="password" placeholder="Minimal 6 karakter"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-400 outline-none transition-all placeholder-gray-400 font-medium text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-green-600"></i> Konfirmasi Password Baru
+                    </label>
+                    <input type="password" placeholder="Ulangi password baru"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-red-400 outline-none transition-all placeholder-gray-400 font-medium text-sm">
+                </div>
+
+                <button
+                    class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 mt-4 rounded-xl shadow-md transition-all text-center flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> Ubah Password
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+        <div
+            class="max-w-lg mx-auto px-6 py-3 flex justify-between items-center text-[10px] md:text-xs font-bold text-gray-400">
+            <a href="/dashboard" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-house text-xl mb-1"></i>
+                Dashboard
+            </a>
+            <a href="/whatsapp" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-brands fa-whatsapp text-xl mb-1"></i>
+                WhatsApp
+            </a>
+            <a href="/referral" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-users text-xl mb-1"></i>
+                Referral
+            </a>
+            <a href="/withdraw" class="flex flex-col items-center gap-1 hover:text-gray-800 transition-colors w-16">
+                <i class="fa-solid fa-money-bill-wave text-xl mb-1"></i>
+                Withdraw
+            </a>
+
+            <!-- Active state item -->
+            <a href="/profil"
+                class="flex flex-col items-center gap-1 text-white bg-wa px-4 py-3 rounded-2xl shadow-lg shadow-wa/40 -mt-6 hover:bg-wa-dark transition-all scale-110">
+                <i class="fa-solid fa-user-gear text-2xl mb-1"></i>
+                Profil
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // ── State metode yang sedang dipilih ───────────────────────────────────
+        let currentMethod = 'bank';
+        let isLocked = false;
+
+        function selectMethod(method) {
+            if (isLocked) return;
+            currentMethod = method;
+            const btnBank = document.getElementById('btn-bank');
+            const btnCrypto = document.getElementById('btn-crypto');
+            const formBank = document.getElementById('form-bank');
+            const formCrypto = document.getElementById('form-crypto');
+
+            btnBank.className = 'border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer hover:border-gray-300 transition-colors';
+            btnBank.innerHTML = '<i class="fa-solid fa-building-columns text-2xl text-gray-400 mb-2"></i><h4 class="font-bold text-gray-600 text-sm">Bank</h4>';
+            btnCrypto.className = 'border-2 border-gray-200 rounded-xl p-4 text-center cursor-pointer hover:border-gray-300 transition-colors';
+            btnCrypto.innerHTML = '<i class="fa-brands fa-bitcoin text-2xl text-gray-400 mb-2"></i><h4 class="font-bold text-gray-600 text-sm">Crypto</h4>';
+            formBank.classList.add('hidden');
+            formCrypto.classList.add('hidden');
+
+            if (method === 'bank') {
+                btnBank.className = 'border-2 border-wa bg-green-50 rounded-xl p-4 text-center cursor-pointer transition-colors relative';
+                btnBank.innerHTML = '<i class="fa-solid fa-building-columns text-2xl text-gray-500 mb-2"></i><h4 class="font-bold text-gray-800 text-sm">Bank</h4>';
+                formBank.classList.remove('hidden');
+            } else {
+                btnCrypto.className = 'border-2 border-wa bg-green-50 rounded-xl p-4 text-center cursor-pointer transition-colors relative';
+                btnCrypto.innerHTML = '<i class="fa-brands fa-bitcoin text-2xl text-gray-500 mb-2"></i><h4 class="font-bold text-gray-800 text-sm">Crypto</h4>';
+                formCrypto.classList.remove('hidden');
+            }
+        }
+
+        // ── Format tanggal ─────────────────────────────────────────────────────
+        function formatTanggal(isoString) {
+            if (!isoString) return '-';
+            const d = new Date(isoString);
+            const bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            return d.getDate() + ' ' + bulan[d.getMonth()] + ' ' + d.getFullYear();
+        }
+
+        // ── Load payment method dari API dan isi form ──────────────────────────
+        function loadPaymentMethod(username) {
+            fetch('/api/user/payment-method?username=' + encodeURIComponent(username))
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success || !data.paymentMethod) return;
+                    const pm = data.paymentMethod;
+                    selectMethod(pm.method);
+                    isLocked = true; // Kunci jika data sudah ada
+
+                    if (pm.method === 'bank') {
+                        const sel = document.getElementById('select-bank');
+                        const accNum = document.getElementById('input-account-number');
+                        const accName = document.getElementById('input-account-name');
+                        if (sel) { sel.value = pm.bankName || ''; sel.disabled = true; sel.classList.add('bg-gray-100', 'cursor-not-allowed'); }
+                        if (accNum) { accNum.value = pm.accountNumber || ''; accNum.disabled = true; accNum.classList.add('bg-gray-100', 'cursor-not-allowed'); }
+                        if (accName) { accName.value = pm.accountName || ''; accName.disabled = true; accName.classList.add('bg-gray-100', 'cursor-not-allowed'); }
+                    } else if (pm.method === 'crypto') {
+                        const cryptoInput = document.getElementById('input-crypto-address');
+                        if (cryptoInput) { cryptoInput.value = pm.cryptoAddress || ''; cryptoInput.disabled = true; cryptoInput.classList.add('bg-gray-100', 'cursor-not-allowed'); }
+                    }
+
+                    // Sembunyikan tombol simpan dan ubah notice
+                    const btnSave = document.getElementById('btn-save-payment');
+                    if (btnSave) btnSave.style.display = 'none';
+
+                    const noticeDiv = document.querySelector('#btn-save-payment').nextElementSibling;
+                    if (noticeDiv) {
+                        noticeDiv.className = 'bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4 text-xs text-yellow-800 font-medium flex items-start gap-2';
+                        noticeDiv.innerHTML = '<i class="fa-solid fa-lock mt-0.5"></i><span>Metode penarikan telah dikunci permanen demi keamanan dan tidak dapat diubah lagi.</span>';
+                    }
+                })
+                .catch(() => { });
+        }
+
+        // ── Simpan payment method ke API ───────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            const username = localStorage.getItem('user_username') || '';
+            const joinedAt = localStorage.getItem('user_joinedAt') || '';
+
+            // Isi navbar
+            const navUsernameEl = document.getElementById('nav-username');
+            const navAvatarEl = document.getElementById('nav-avatar');
+            if (navUsernameEl) navUsernameEl.textContent = username || 'Guest';
+            if (navAvatarEl) navAvatarEl.textContent = username ? username.charAt(0).toUpperCase() : '?';
+
+            // Isi informasi akun
+            const profilUsernameEl = document.getElementById('profil-username');
+            const profilJoinedEl = document.getElementById('profil-joined');
+            if (profilUsernameEl) profilUsernameEl.textContent = username || '-';
+            if (profilJoinedEl) profilJoinedEl.textContent = formatTanggal(joinedAt);
+
+            // Load metode penarikan yang sudah tersimpan
+            if (username) loadPaymentMethod(username);
+
+            // Handle tombol simpan
+            const btnSave = document.getElementById('btn-save-payment');
+            if (btnSave) {
+                btnSave.addEventListener('click', async () => {
+                    if (!username) { alert('Anda belum login!'); return; }
+
+                    let body = { username, method: currentMethod };
+
+                    if (currentMethod === 'bank') {
+                        const bankName = document.getElementById('select-bank')?.value || '';
+                        const accountNumber = document.getElementById('input-account-number')?.value.trim() || '';
+                        const accountName = document.getElementById('input-account-name')?.value.trim() || '';
+                        if (!bankName || bankName === 'Pilih Bank') { alert('Pilih nama bank terlebih dahulu!'); return; }
+                        if (!accountNumber) { alert('Nomor rekening harus diisi!'); return; }
+                        if (!accountName) { alert('Nama pemilik rekening harus diisi!'); return; }
+                        body = { ...body, bankName, accountNumber, accountName };
+                    } else {
+                        const cryptoAddress = document.getElementById('input-crypto-address')?.value.trim() || '';
+                        if (!cryptoAddress) { alert('Alamat crypto harus diisi!'); return; }
+                        body = { ...body, cryptoAddress };
+                    }
+
+                    btnSave.disabled = true;
+                    btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+                    try {
+                        const res = await fetch('/api/user/payment-method', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(body)
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            btnSave.innerHTML = '<i class="fa-solid fa-circle-check"></i> Tersimpan!';
+                            btnSave.className = 'w-full bg-green-600 text-white font-bold py-3 rounded-xl shadow-md transition-all text-center flex items-center justify-center gap-2';
+                            setTimeout(() => {
+                                btnSave.disabled = false;
+                                btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Metode Penarikan';
+                                btnSave.className = 'w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-md transition-all text-center flex items-center justify-center gap-2';
+                            }, 2000);
+                        } else {
+                            alert('Gagal menyimpan: ' + data.message);
+                            btnSave.disabled = false;
+                            btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Metode Penarikan';
+                        }
+                    } catch (err) {
+                        alert('Terjadi kesalahan koneksi.');
+                        btnSave.disabled = false;
+                        btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Metode Penarikan';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
