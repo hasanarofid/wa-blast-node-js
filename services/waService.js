@@ -69,32 +69,32 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         await new Promise(r => setTimeout(r, 6000));
 
         if (pairingNumber) {
-            // PAIRING CODE MODE - v2.2.3 uses the connect endpoint with a number query
+            // PAIRING CODE MODE - v1.8.2 uses POST /instance/pairingCode/{id}
             let pairAttempts = 0;
             const pairInterval = setInterval(async () => {
                 pairAttempts++;
                 try {
-                    const pairRes = await axios.get(
-                        `${EVO_URL}/instance/connect/${sessionId}?number=${String(pairingNumber)}`,
+                    const pairRes = await axios.post(
+                        `${EVO_URL}/instance/pairingCode/${sessionId}`,
+                        { number: String(pairingNumber) },
                         { headers: { 'apikey': EVO_KEY } }
                     );
-                    console.log(`[EVO v2] Pairing attempt ${pairAttempts}:`, JSON.stringify(pairRes.data));
+                    console.log(`[EVO v1] Pairing attempt ${pairAttempts}:`, JSON.stringify(pairRes.data));
 
-                    // In v2, the code can be in .code or .pairingCode
                     const code = pairRes.data?.code || pairRes.data?.pairingCode;
                     if (code && typeof code === 'string' && code.length >= 6) {
-                        console.log(`[EVO v2] Got pairing code: ${code}`);
+                        console.log(`[EVO v1] Got pairing code: ${code}`);
                         if (io) io.to(userId).emit("pairing_code", code);
                         clearInterval(pairInterval);
                     }
                 } catch (e) {
-                    console.log(`[EVO v2] Pairing attempt ${pairAttempts} error:`, e.response?.data || e.message);
+                    console.log(`[EVO v1] Pairing attempt ${pairAttempts} error:`, e.response?.data || e.message);
                     if (pairAttempts >= 20) clearInterval(pairInterval);
                 }
             }, 3000);
 
         } else {
-            // QR CODE MODE
+            // QR CODE MODE - v1.8.2 returns base64 directly in connect
             let qrAttempts = 0;
             const qrInterval = setInterval(async () => {
                 qrAttempts++;
@@ -103,28 +103,24 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                         headers: { 'apikey': EVO_KEY }
                     });
                     
-                    // In v2, base64 might be nested or direct
-                    const qrBase64 = connectRes.data?.base64 || connectRes.data?.code;
-                    console.log(`[EVO v2] QR attempt ${qrAttempts}, has_qr: ${!!qrBase64}`);
+                    const qrBase64 = connectRes.data?.base64;
+                    console.log(`[EVO v1] QR attempt ${qrAttempts}, has_qr: ${!!qrBase64}`);
 
-                    if (qrBase64 && typeof qrBase64 === 'string' && qrBase64.length > 100) {
+                    if (qrBase64) {
                         if (io) io.to(userId).emit("qr", qrBase64);
                     }
 
-                    // Check state
-                    try {
-                        const stateRes = await axios.get(`${EVO_URL}/instance/connectionState/${sessionId}`, {
-                            headers: { 'apikey': EVO_KEY }
-                        });
-                        if (stateRes.data?.instance?.state === 'open') {
-                            clearInterval(qrInterval);
-                            if (io) io.to(userId).emit("status", "connected");
-                            if (io) io.to(userId).emit("wa_list_update");
-                        }
-                    } catch (e) {}
-
+                    // Check if open
+                    const stateRes = await axios.get(`${EVO_URL}/instance/connectionState/${sessionId}`, {
+                        headers: { 'apikey': EVO_KEY }
+                    });
+                    if (stateRes.data?.instance?.state === 'open') {
+                        clearInterval(qrInterval);
+                        if (io) io.to(userId).emit("status", "connected");
+                        if (io) io.to(userId).emit("wa_list_update");
+                    }
                 } catch (e) {
-                    console.log(`[EVO v2] QR attempt ${qrAttempts} error:`, e.message);
+                    console.log(`[EVO v1] QR attempt ${qrAttempts} error:`, e.message);
                     if (qrAttempts >= 40) clearInterval(qrInterval);
                 }
             }, 2000);
