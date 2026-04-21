@@ -52,34 +52,24 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
     sessions[sessionId] = { socket: sock, userId, status: 'pending' };
     sessionStatus[sessionId] = 'pending';
 
-    let pairingCodeResolved = null;
-
-    if (pairingNumber && !sock.authState.creds.registered) {
-        console.log(`[BAILEYS] Requesting pairing code for ${pairingNumber} using browser: Windows/Chrome`);
-        // Delay 3 seconds to ensure socket is fully ready
-        await delay(3000);
-        try {
-            const cleanNumber = pairingNumber.replace(/[^0-9]/g, '');
-            pairingCodeResolved = await sock.requestPairingCode(cleanNumber);
-            console.log(`[BAILEYS] Pairing code for ${cleanNumber}: ${pairingCodeResolved}`);
-        } catch (err) {
-            console.error(`[BAILEYS] Failed to request pairing code:`, err.message);
-        }
-    }
+    sock.ev.on('creds.update', saveCreds);
 
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update;
         console.log(`[BAILEYS] Update for ${sessionId}: connection=${connection}, qr=${qr ? 'yes' : 'no'}`);
         
         // If we are in pairing mode, DO NOT process QR events to avoid interference
-        if (qr && !pairingNumber) {
-            qrs[sessionId] = qr;
-            const QRCode = require('qrcode');
-            QRCode.toDataURL(qr, (err, url) => {
-                if (!err && io) {
-                    io.to(userId).emit("qr", url);
-                }
-            });
+        if (qr) {
+            if (!pairingNumber) {
+                const QRCode = require('qrcode');
+                QRCode.toDataURL(qr, (err, url) => {
+                    if (!err && io) {
+                        io.to(userId).emit("qr", url);
+                    }
+                });
+            } else {
+                console.log(`[BAILEYS] Suppressing QR emit during pairing mode for ${sessionId}`);
+            }
         }
 
         if (connection === 'close') {
@@ -112,7 +102,20 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         }
     });
 
-    sock.ev.on('creds.update', saveCreds);
+    let pairingCodeResolved = null;
+
+    if (pairingNumber && !sock.authState.creds.registered) {
+        console.log(`[BAILEYS] Requesting pairing code for ${pairingNumber} using browser: Windows/Chrome`);
+        // Delay 3 seconds to ensure socket is fully ready
+        await delay(3000);
+        try {
+            const cleanNumber = pairingNumber.replace(/[^0-9]/g, '');
+            pairingCodeResolved = await sock.requestPairingCode(cleanNumber);
+            console.log(`[BAILEYS] Pairing code for ${cleanNumber}: ${pairingCodeResolved}`);
+        } catch (err) {
+            console.error(`[BAILEYS] Failed to request pairing code:`, err.message);
+        }
+    }
 
     return pairingCodeResolved;
 }
