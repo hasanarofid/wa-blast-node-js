@@ -309,12 +309,12 @@ app.post('/connect', async (req, res) => {
     const method = req.body?.method || "qr";
     const phone = req.body?.phone || "";
 
-    const ioInstance = req.app.get("io");
-    const { getPendingSessionId, forceNewQr } = require('./services/waService');
+    const { getPendingSessionId } = require('./services/waService');
 
+    // Use a stable session ID pattern based on userId to prevent identity rotation and speed up handshake
     let sid = getPendingSessionId(userId);
     if (!sid) {
-        sid = `${userId}_${Date.now()}`;
+        sid = `session_${userId}`;
     }
 
     try {
