@@ -113,14 +113,20 @@ async function getWaList(userId) {
 
 async function disconnectSession(sessionId) {
     try {
-        await axios.delete(`${EVO_URL}/instance/logout/${sessionId}`, {
-            headers: { 'apikey': EVO_KEY }
-        });
+        // Try logout first, but don't fail if it's already disconnected
+        try {
+            await axios.delete(`${EVO_URL}/instance/logout/${sessionId}`, {
+                headers: { 'apikey': EVO_KEY }
+            });
+        } catch (e) {}
+        
+        // Force delete the instance
         await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, {
             headers: { 'apikey': EVO_KEY }
         });
         return { success: true };
     } catch (error) {
+        console.error('[EVO] Disconnect Error:', error.message);
         return { success: false, error: error.message };
     }
 }
