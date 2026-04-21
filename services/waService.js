@@ -32,16 +32,20 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
             console.log(`[EVO] Instance ${sessionId} already exists or create skipped.`);
         }
 
-        // 2. Immediate Initial Check
+        // 2. Initial Pulse
         const fetchConnect = async () => {
             try {
                 const res = await axios.get(`${EVO_URL}/instance/connect/${sessionId}`, {
                     headers: { 'apikey': EVO_KEY }
                 });
-                if (res.data && res.data.base64) {
+                
+                // ONLY emit QR if NOT in pairing mode
+                if (!pairingNumber && res.data?.base64) {
                     if (io) io.to(userId).emit("qr", res.data.base64);
                 }
-                if (pairingNumber && res.data && res.data.code) {
+                
+                // ONLY emit pairing code if it looks like one (8-10 chars)
+                if (pairingNumber && res.data?.code && res.data.code.length <= 12) {
                      if (io) io.to(userId).emit("pairing_code", res.data.code);
                      return true;
                 }
@@ -51,7 +55,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
         await fetchConnect();
 
-        // 3. Robust Polling (Every 1s for first 10s, then 2s)
+        // 3. Robust Polling
         if (pairingNumber) {
             let pairAttempts = 0;
             const pairInterval = setInterval(async () => {
@@ -60,8 +64,10 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                     const pairRes = await axios.get(`${EVO_URL}/instance/pairingCode/${sessionId}?number=${pairingNumber}`, {
                         headers: { 'apikey': EVO_KEY }
                     });
-                    if (pairRes.data && pairRes.data.code) {
-                        if (io) io.to(userId).emit("pairing_code", pairRes.data.code);
+                    
+                    const code = pairRes.data?.code || pairRes.data?.pairingCode;
+                    if (code && typeof code === 'string' && code.length <= 12) {
+                        if (io) io.to(userId).emit("pairing_code", code);
                         clearInterval(pairInterval);
                     }
                 } catch (e) {
