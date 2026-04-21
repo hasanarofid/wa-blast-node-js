@@ -13,26 +13,28 @@ const instances = {}; // cache of instance status
 
 async function createInstance(sessionId, userId, io, pairingNumber = null) {
     try {
-        console.log(`[EVO] Initializing instance for ${sessionId}...`);
+        console.log(`[EVO] Resetting instance for ${sessionId} to ensure clean slate...`);
         
-        // 1. Attempt to create (will fail if exists, which is fine)
+        // 1. Force cleanup existing to ensure fresh QR/Pairing
         try {
-            const payload = {
-                instanceName: sessionId,
-                token: EVO_KEY,
-                pairingCode: !!pairingNumber
-            };
-            if (pairingNumber) payload.number = pairingNumber;
+            await axios.delete(`${EVO_URL}/instance/logout/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
+            await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
+        } catch (e) {}
 
-            await axios.post(`${EVO_URL}/instance/create`, payload, { 
-                headers: { 'apikey': EVO_KEY } 
-            });
-            console.log(`[EVO] Instance ${sessionId} initialized.`);
-        } catch (e) {
-            console.log(`[EVO] Instance ${sessionId} already exists or create skipped.`);
-        }
+        // 2. Create Fresh Instance
+        const payload = {
+            instanceName: sessionId,
+            token: EVO_KEY,
+            pairingCode: !!pairingNumber
+        };
+        if (pairingNumber) payload.number = pairingNumber;
 
-        // 2. Initial Pulse
+        await axios.post(`${EVO_URL}/instance/create`, payload, { 
+            headers: { 'apikey': EVO_KEY } 
+        });
+        console.log(`[EVO] Fresh instance ${sessionId} created.`);
+
+        // 3. Pulse check
         const fetchConnect = async () => {
             try {
                 const res = await axios.get(`${EVO_URL}/instance/connect/${sessionId}`, {
