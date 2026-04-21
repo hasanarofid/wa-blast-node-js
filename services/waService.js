@@ -26,17 +26,29 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
             await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
         } catch (e) {}
 
-        // 2. Create fresh instance (no number/pairingCode in create for v2)
-        await axios.post(`${EVO_URL}/instance/create`, {
-            instanceName: sessionId,
-            token: EVO_KEY,
-            integration: 'WHATSAPP-BAILEYS'
-        }, { headers: { 'apikey': EVO_KEY } });
+        // 2. Create fresh instance with retry logic
+        let createSuccess = false;
+        for (let i = 0; i < 3; i++) {
+            try {
+                await axios.post(`${EVO_URL}/instance/create`, {
+                    instanceName: sessionId,
+                    token: EVO_KEY,
+                    integration: 'WHATSAPP-BAILEYS'
+                }, { headers: { 'apikey': EVO_KEY } });
+                createSuccess = true;
+                break;
+            } catch (e) {
+                console.log(`[EVO v2] Create attempt ${i+1} failed, retrying in 2s...`);
+                await new Promise(r => setTimeout(r, 2000));
+            }
+        }
 
-        console.log(`[EVO v2] Instance created: ${sessionId}`);
+        if (!createSuccess) throw new Error("Gagal membuat instance setelah 3 percobaan.");
+
+        console.log(`[EVO v2] Instance ready: ${sessionId}`);
 
         // 3. Wait for initialization
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise(r => setTimeout(r, 4000));
 
         if (pairingNumber) {
             // PAIRING CODE MODE - v2 uses POST /instance/pairing-code/{id}
