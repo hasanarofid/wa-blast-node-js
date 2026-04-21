@@ -31,16 +31,16 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         const createPayload = {
             instanceName: sessionId,
             token: EVO_KEY,
-            integration: 'WHATSAPP-BAILEYS'
+            integration: 'WHATSAPP-BAILEYS',
+            alwaysOnline: true,
+            pairingCode: !!pairingNumber
         };
+        if (pairingNumber) createPayload.number = String(pairingNumber);
 
         for (let i = 0; i < 3; i++) {
             try {
                 await axios.post(`${EVO_URL}/instance/create`, createPayload, { 
-                    headers: { 
-                        'apikey': EVO_KEY,
-                        'Content-Type': 'application/json'
-                    } 
+                    headers: { 'apikey': EVO_KEY } 
                 });
                 createSuccess = true;
                 break;
@@ -52,10 +52,10 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
         if (!createSuccess) throw new Error("Gagal membuat instance setelah 3 percobaan.");
 
-        console.log(`[EVO v2] Instance ready: ${sessionId}`);
+        console.log(`[EVO v2] Instance ready: ${sessionId} | pairing=${!!pairingNumber}`);
 
-        // 3. Wait for initialization (v2 needs a bit more time for Baileys handshake)
-        await new Promise(r => setTimeout(r, 5000));
+        // 3. Wait for initialization (v2 needs more time to spin up Baileys)
+        await new Promise(r => setTimeout(r, 6000));
 
         if (pairingNumber) {
             // PAIRING CODE MODE - v2 uses POST /instance/pairing-code/{id}
