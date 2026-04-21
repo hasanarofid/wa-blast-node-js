@@ -106,8 +106,8 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         console.log(`[BAILEYS] Requesting fresh pairing code for ${pairingNumber}`);
         setTimeout(async () => {
             try {
-                // Ensure socket is still healthy
-                if (!sock.authState.creds.registered) {
+                // Double check session still exists
+                if (sessions[sessionId] && !sock.authState.creds.registered) {
                     const code = await sock.requestPairingCode(pairingNumber);
                     console.log(`[BAILEYS] Pairing code for ${pairingNumber}: ${code}`);
                     if (io) io.to(userId).emit("pairing_code", code);
@@ -116,7 +116,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                 console.error(`[BAILEYS] Pairing Request Error:`, err.message);
                 if (io) io.to(userId).emit("pairing_error", err.message);
             }
-        }, 6000); // 6s delay for stability
+        }, 10000); // 10s delay for ultimate stability on VPS
     }
 
     return pairingCodeResolved;

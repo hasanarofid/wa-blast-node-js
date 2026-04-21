@@ -472,6 +472,22 @@
             }
         });
 
+        socket.on("pairing_code", (code) => {
+            console.log("RECEIVED PAIRING CODE:", code);
+            const display = document.getElementById('pairingCodeDisplay');
+            if (display) {
+                display.textContent = code;
+                display.classList.remove('animate-pulse'); // remove fallback animation if present
+            }
+        });
+
+        socket.on("pairing_error", (err) => {
+            console.error("PAIRING ERROR:", err);
+            const display = document.getElementById('pairingCodeDisplay');
+            if (display) display.textContent = "ERROR";
+            alert("Pairing Error: " + err);
+        });
+
         socket.on("wa_list_update", () => {
             fetchWaList();
         });
