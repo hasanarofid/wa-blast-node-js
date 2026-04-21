@@ -589,9 +589,9 @@ app.post('/api/blast/stop', (req, res) => {
 // ── Telegram Auto Report ─────────────────────────────────────────────────────
 const https = require('https');
 
-// Token bot & chat ID tujuan
-const TELEGRAM_TOKEN = "8602635290:AAF-MByVJb4C3F6jxx4zQ7s5C7pYc3yP-NA";
-const TELEGRAM_CHAT_ID = "-1003548973559"; // Chat ID personal kamu
+// Token bot & chat ID tujuan (Diambil dari environment variables untuk keamanan)
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN || "";
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
 
 // Kirim pesan teks ke Telegram
 function sendTelegramMessage(message) {

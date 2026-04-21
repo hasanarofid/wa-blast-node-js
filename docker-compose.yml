@@ -15,3 +15,5 @@ services:
       - PORT=3001
       - TZ=Asia/Jakarta
       - NODE_ENV=production
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
