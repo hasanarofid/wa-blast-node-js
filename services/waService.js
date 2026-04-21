@@ -70,15 +70,14 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         await new Promise(r => setTimeout(r, 5000));
 
         if (pairingNumber) {
-            // PAIRING CODE MODE
+            // PAIRING CODE MODE - v1.8.2 uses GET /instance/pairingCode/{id}?number={num}
             console.log(`[EVO v1] Requesting pairing code for ${pairingNumber}...`);
             let pairAttempts = 0;
             activePolls[sessionId] = setInterval(async () => {
                 pairAttempts++;
                 try {
-                    const pairRes = await axios.post(
-                        `${EVO_URL}/instance/pairingCode/${sessionId}`,
-                        { number: String(pairingNumber) },
+                    const pairRes = await axios.get(
+                        `${EVO_URL}/instance/pairingCode/${sessionId}?number=${String(pairingNumber)}`,
                         { headers: { 'apikey': EVO_KEY } }
                     );
                     
