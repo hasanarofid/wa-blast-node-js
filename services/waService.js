@@ -34,14 +34,16 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
     const sessionPath = path.join(SESSIONS_DIR, sessionId);
     const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-    const { version } = await fetchLatestBaileysVersion();
+    
+    // Stable legacy version lock for pairing success
+    const version = [2, 2413, 1];
 
     const sock = makeWASocket({
         version,
         logger,
         printQRInTerminal: false,
-        browser: ["Ubuntu", "Chrome", "20.0.04"],
-        markOnline: false,
+        browser: ["Chrome (Linux)", "Chrome", "110.0.0.0"],
+        markOnline: true,
         syncFullHistory: false, // For speed like Evolution API
         connectTimeoutMs: 60000,
         defaultQueryTimeoutMs: 0,
@@ -72,7 +74,8 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
         if (connection === 'close') {
             const isLoggedOut = (lastDisconnect?.error)?.output?.statusCode === DisconnectReason.loggedOut;
-            const shouldReconnect = !isLoggedOut;
+            // Force reconnect if still pending/pairing to overcome VPS IP flapping
+            const shouldReconnect = !isLoggedOut || sessionStatus[sessionId] === 'pending';
             
             console.log(`[BAILEYS] Connection closed for ${sessionId}. Reconnecting: ${shouldReconnect}`);
             
