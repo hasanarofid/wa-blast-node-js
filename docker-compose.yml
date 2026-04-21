@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:alpine
+    container_name: setorwa-redis
+    restart: always
+
+  evolution:
+    image: atendare/evolution-api:latest
+    container_name: setorwa-evolution
+    restart: always
+    environment:
+      - SERVER_TYPE=http
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_HOST=redis
+      - CACHE_REDIS_PORT=6379
+      - CACHE_LOCAL_ENABLED=true
+      - DATABASE_ENABLED=false
+      - AUTH_API_KEY=${EVO_KEY}
+    depends_on:
+      - redis
+
   app:
     build: .
     container_name: setorwa-app
@@ -17,3 +37,7 @@ services:
       - NODE_ENV=production
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - EVO_URL=http://evolution:8080
+      - EVO_KEY=${EVO_KEY}
+    depends_on:
+      - evolution
