@@ -28,17 +28,24 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
         // 2. Create fresh instance with retry logic
         let createSuccess = false;
+        const createPayload = {
+            instanceName: sessionId,
+            token: EVO_KEY,
+            integration: 'WHATSAPP-BAILEYS'
+        };
+
         for (let i = 0; i < 3; i++) {
             try {
-                await axios.post(`${EVO_URL}/instance/create`, {
-                    instanceName: sessionId,
-                    token: EVO_KEY,
-                    integration: 'WHATSAPP-BAILEYS'
-                }, { headers: { 'apikey': EVO_KEY } });
+                await axios.post(`${EVO_URL}/instance/create`, createPayload, { 
+                    headers: { 
+                        'apikey': EVO_KEY,
+                        'Content-Type': 'application/json'
+                    } 
+                });
                 createSuccess = true;
                 break;
             } catch (e) {
-                console.log(`[EVO v2] Create attempt ${i+1} failed, retrying in 2s...`);
+                console.log(`[EVO v2] Create attempt ${i+1} failed:`, e.response?.data || e.message);
                 await new Promise(r => setTimeout(r, 2000));
             }
         }
@@ -47,8 +54,8 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
         console.log(`[EVO v2] Instance ready: ${sessionId}`);
 
-        // 3. Wait for initialization
-        await new Promise(r => setTimeout(r, 4000));
+        // 3. Wait for initialization (v2 needs a bit more time for Baileys handshake)
+        await new Promise(r => setTimeout(r, 5000));
 
         if (pairingNumber) {
             // PAIRING CODE MODE - v2 uses POST /instance/pairing-code/{id}
