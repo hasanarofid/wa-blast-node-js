@@ -13,6 +13,9 @@ const instances = {}; // cache of instance status
 
 async function createInstance(sessionId, userId, io, pairingNumber = null) {
     try {
+        // Wait a bit to ensure DNS is ready if containers just started
+        await new Promise(r => setTimeout(r, 2000));
+        
         console.log(`[EVO] Creating instance for ${sessionId}...`);
         
         // 1. Create Instance

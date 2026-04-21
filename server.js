@@ -310,13 +310,7 @@ app.post('/connect', async (req, res) => {
     const phone = req.body?.phone || "";
 
     const ioInstance = req.app.get("io");
-    const { getPendingSessionId } = require('./services/waService');
-
-    // Use a stable session ID pattern based on userId to prevent identity rotation and speed up handshake
-    let sid = getPendingSessionId(userId);
-    if (!sid) {
-        sid = `session_${userId}`;
-    }
+    const sid = `session_${userId}`;
 
     try {
         const { createInstance } = require('./services/waService');
