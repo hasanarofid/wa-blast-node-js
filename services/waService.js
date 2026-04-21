@@ -41,6 +41,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         version,
         logger,
         printQRInTerminal: false,
+        browser: ["Ubuntu", "Chrome", "20.0.04"],
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, logger),
@@ -123,6 +124,16 @@ async function forceNewQr(sessionId, userId, io, method = 'qr', phone = '') {
     // If session exists, disconnect first
     if (sessions[sessionId]) {
         await disconnectSession(sessionId);
+    }
+
+    // Clean session folder to ensure fresh pairing/qr
+    const sessionPath = path.join(SESSIONS_DIR, sessionId);
+    if (fs.existsSync(sessionPath)) {
+        try {
+            fs.rmSync(sessionPath, { recursive: true, force: true });
+        } catch (err) {
+            console.error(`[BAILEYS] Failed to clean session folder:`, err.message);
+        }
     }
 
     const pairingCode = await createInstance(sessionId, userId, io, method === 'pairing' ? phone : null);
