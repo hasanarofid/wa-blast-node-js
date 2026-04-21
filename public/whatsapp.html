@@ -589,10 +589,20 @@
         let isBlasting = false;
 
         function openModal() {
+            // Reset modal state as requested
+            const phoneInput = document.getElementById('pairingPhone');
+            if (phoneInput) phoneInput.value = '';
+            
+            const qrRadio = document.querySelector('input[name="method"][value="qr"]');
+            if (qrRadio) {
+                qrRadio.checked = true;
+                // Trigger change to hide pairing section if it was shown
+                const pairingSection = document.getElementById('pairingInputSection');
+                if (pairingSection) pairingSection.classList.add('hidden');
+            }
+
             overlay.classList.remove('hidden');
             overlay.classList.add('flex');
-            modalPilihMetode.classList.remove('hidden');
-            modalPilihMetode.classList.add('flex');
 
             // animation delay
             setTimeout(() => {
