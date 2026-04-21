@@ -17,13 +17,17 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         
         // 1. Attempt to create (will fail if exists, which is fine)
         try {
-            await axios.post(`${EVO_URL}/instance/create`, {
+            const payload = {
                 instanceName: sessionId,
                 token: EVO_KEY,
-                number: pairingNumber,
                 pairingCode: !!pairingNumber
-            }, { headers: { 'apikey': EVO_KEY } });
-            console.log(`[EVO] Instance ${sessionId} created.`);
+            };
+            if (pairingNumber) payload.number = pairingNumber;
+
+            await axios.post(`${EVO_URL}/instance/create`, payload, { 
+                headers: { 'apikey': EVO_KEY } 
+            });
+            console.log(`[EVO] Instance ${sessionId} initialized.`);
         } catch (e) {
             console.log(`[EVO] Instance ${sessionId} already exists or create skipped.`);
         }
