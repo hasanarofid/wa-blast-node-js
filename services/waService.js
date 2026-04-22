@@ -48,7 +48,8 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         const createPayload = {
             instanceName: sessionId,
             token: EVO_KEY,
-            alwaysOnline: true
+            alwaysOnline: true,
+            pairingCode: true
         };
 
         for (let i = 0; i < 3; i++) {
@@ -67,7 +68,8 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         if (!createSuccess) throw new Error("Gagal membuat instance.");
 
         console.log(`[EVO v1] Instance ready: ${sessionId}`);
-        await new Promise(r => setTimeout(r, 5000));
+        // Speeed up wait to 2s
+        await new Promise(r => setTimeout(r, 2000));
 
         if (pairingNumber) {
             // PAIRING CODE MODE - v1.8.2 uses GET /instance/pairingCode/{id}?number={num}
@@ -88,10 +90,12 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                         stopPolling(sessionId);
                     }
                 } catch (e) {
-                    console.log(`[EVO v1] Pairing attempt ${pairAttempts} error:`, e.response?.data?.message?.[0] || e.message);
-                    if (pairAttempts >= 20) stopPolling(sessionId);
+                    // Log error to see if it's still 404
+                    const errStatus = e.response?.status;
+                    console.log(`[EVO v1] Pairing attempt ${pairAttempts} error [${errStatus}]:`, e.response?.data?.message?.[0] || e.message);
+                    if (pairAttempts >= 30) stopPolling(sessionId);
                 }
-            }, 3000);
+            }, 2500);
 
         } else {
             // QR CODE MODE
