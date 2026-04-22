@@ -14,6 +14,17 @@ const EVO_KEY = process.env.EVO_KEY || 'setorwasecret123';
  *   DELETE /instance/delete/{id}       - delete
  */
 
+// Global polling tracker to prevent multiple intervals for the same session
+const activePolls = {};
+
+function stopPolling(sessionId) {
+    if (activePolls[sessionId]) {
+        console.log(`[EVO v1] Stopping existing poll for ${sessionId}`);
+        clearInterval(activePolls[sessionId]);
+        delete activePolls[sessionId];
+    }
+}
+
 async function createInstance(sessionId, userId, io, pairingNumber = null) {
     try {
         console.log(`[EVO v2] Starting fresh for ${sessionId} | pairing=${pairingNumber}`);
@@ -25,7 +36,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         console.log(`[EVO v2] Force cleanup for ${sessionId}...`);
         try {
             await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
-            await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 500));
         } catch (e) {}
 
         // 3. Create fresh instance with v2 payload
@@ -50,7 +61,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
         console.log(`[EVO v2] Instance ready: ${sessionId}`);
         // Ultra-fast wait for v2
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise(r => setTimeout(r, 1000));
 
         if (pairingNumber) {
             // PAIRING CODE MODE - v2 uses GET /instance/connect/{id}?number={num}
