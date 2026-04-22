@@ -70,8 +70,10 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
             activePolls[sessionId] = setInterval(async () => {
                 pairAttempts++;
                 try {
-                    const pairRes = await axios.get(
-                        `${EVO_URL}/instance/connect/${sessionId}?number=${String(pairingNumber)}`,
+                    // v2.1.2 official pairing endpoint is POST
+                    const pairRes = await axios.post(
+                        `${EVO_URL}/instance/connect/pairing/${sessionId}`,
+                        { number: String(pairingNumber) },
                         { headers: { 'apikey': EVO_KEY } }
                     );
                     
@@ -82,7 +84,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                                  pairRes.data?.instance?.pairingCode;
 
                     if (code && typeof code === 'string' && code.length >= 6) {
-                        console.log(`[EVO v2] DECTECTED Pairing code: ${code}`);
+                        console.log(`[EVO v2] DETECTED Pairing code: ${code}`);
                         if (io) io.to(userId).emit("pairing_code", code);
                         stopPolling(sessionId);
                     }

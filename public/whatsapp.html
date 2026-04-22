@@ -452,7 +452,7 @@
         });
 
         const socket = io();
-        console.log("App Version: v17.18 (Field Inspector)");
+        console.log("App Version: v17.19 (POST Pairing)");
         socket.emit("join", userId);
 
         socket.on("qr", (qrImage) => {
