@@ -19,7 +19,7 @@ const activePolls = {};
 
 function stopPolling(sessionId) {
     if (activePolls[sessionId]) {
-        console.log(`[EVO v1] Stopping existing poll for ${sessionId}`);
+        console.log(`[EVO v2] Stopping existing poll for ${sessionId}`);
         clearInterval(activePolls[sessionId]);
         delete activePolls[sessionId];
     }
@@ -34,19 +34,22 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
         // 2. Proactive Clean Slate
         console.log(`[EVO v2] Force cleanup for ${sessionId}...`);
-        try {
-            await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
-            await new Promise(r => setTimeout(r, 500));
-        } catch (e) {}
-
-        // 3. Create fresh instance with v2 payload
+        // 3. Create fresh instance - Mirroring masterwa payload
         let createSuccess = false;
         const createPayload = {
             instanceName: sessionId,
             token: EVO_KEY,
             integration: 'WHATSAPP-BAILEYS',
-            alwaysOnline: true
+            alwaysOnline: true,
+            qrcode: true
         };
+
+        if (pairingNumber) {
+            let phone = String(pairingNumber);
+            if (phone.startsWith('0')) phone = '62' + phone.slice(1);
+            if (!phone.startsWith('62')) phone = '62' + phone;
+            createPayload.number = phone;
+        }
 
         try {
             await axios.post(`${EVO_URL}/instance/create`, createPayload, { 
@@ -60,24 +63,22 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         if (!createSuccess) throw new Error("Gagal membuat instance.");
 
         console.log(`[EVO v2] Instance ready: ${sessionId}`);
-        // Ultra-fast wait for v2
-        await new Promise(r => setTimeout(r, 1000));
+        // 🔥 MASTERWA MIRROR: WAIT 5 SECONDS FOR STABILITY
+        await new Promise(r => setTimeout(r, 5000));
 
         if (pairingNumber) {
-            // PAIRING CODE MODE - v2 uses GET /instance/connect/{id}?number={num}
-            console.log(`[EVO v2] Requesting pairing code for ${pairingNumber}...`);
+            // PAIRING CODE MODE - masterwa uses /instance/connect directly
+            console.log(`[EVO v2] Requesting pairing code (Masterwa Style)...`);
             let pairAttempts = 0;
             activePolls[sessionId] = setInterval(async () => {
                 pairAttempts++;
                 try {
-                    // v2.1.2 official pairing endpoint is POST
-                    const pairRes = await axios.post(
-                        `${EVO_URL}/instance/connect/pairing/${sessionId}`,
-                        { number: String(pairingNumber) },
+                    const pairRes = await axios.get(
+                        `${EVO_URL}/instance/connect/${sessionId}`,
                         { headers: { 'apikey': EVO_KEY } }
                     );
                     
-                    console.log(`[EVO v2] Pairing Res [Attempt ${pairAttempts}]:`, JSON.stringify(pairRes.data));
+                    console.log(`[EVO v2] Pairing Res:`, JSON.stringify(pairRes.data));
 
                     const code = pairRes.data?.code || 
                                  pairRes.data?.pairingCode || 
@@ -89,7 +90,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                         stopPolling(sessionId);
                     }
                 } catch (e) {
-                    console.log(`[EVO v2] Pairing attempt ${pairAttempts} error:`, e.response?.data?.message?.[0] || e.message);
+                    console.log(`[EVO v2] Pairing attempt ${pairAttempts} error:`, e.message);
                     if (pairAttempts >= 30) stopPolling(sessionId);
                 }
             }, 2000);
@@ -122,7 +123,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                     console.log(`[EVO v2] QR attempt ${qrAttempts} error:`, e.message);
                     if (qrAttempts >= 40) stopPolling(sessionId);
                 }
-            }, 1000); // Super fast QR polling
+            }, 2000);
         }
 
         return { success: true };
