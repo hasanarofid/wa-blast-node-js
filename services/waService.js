@@ -75,9 +75,14 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                         { headers: { 'apikey': EVO_KEY } }
                     );
                     
-                    const code = pairRes.data?.code || pairRes.data?.pairingCode;
+                    console.log(`[EVO v2] Pairing Res [Attempt ${pairAttempts}]:`, JSON.stringify(pairRes.data));
+
+                    const code = pairRes.data?.code || 
+                                 pairRes.data?.pairingCode || 
+                                 pairRes.data?.instance?.pairingCode;
+
                     if (code && typeof code === 'string' && code.length >= 6) {
-                        console.log(`[EVO v2] Got pairing code: ${code}`);
+                        console.log(`[EVO v2] DECTECTED Pairing code: ${code}`);
                         if (io) io.to(userId).emit("pairing_code", code);
                         stopPolling(sessionId);
                     }
