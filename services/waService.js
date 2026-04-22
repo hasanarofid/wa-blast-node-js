@@ -1,211 +1,184 @@
-const axios = require('axios');
+const { 
+    default: makeWASocket, 
+    useMultiFileAuthState, 
+    DisconnectReason, 
+    fetchLatestBaileysVersion,
+    makeCacheableSignalKeyStore,
+    delay,
+    jidNormalizedUser
+} = require('@whiskeysockets/baileys');
+const pino = require('pino');
+const fs = require('fs');
+const path = require('path');
 
-const EVO_URL = process.env.EVO_URL || 'http://evolution:8080';
-const EVO_KEY = process.env.EVO_KEY || 'setorwasecret123';
+// Logger for Baileys
+const logger = pino({ level: 'silent' });
+
+// Global session storage
+const sessions = new Map();
+const qrCodes = new Map();
 
 /**
- * Evolution API Service (v17 - Evolution API v2.x with Pairing Code support)
- * v2 endpoints:
- *   POST /instance/create              - create instance
- *   GET  /instance/connect/{id}        - get QR (returns base64)
- *   POST /instance/pairing-code/{id}   - request pairing code (returns {code})
- *   GET  /instance/connectionState/{id}- get state
- *   DELETE /instance/logout/{id}       - logout
- *   DELETE /instance/delete/{id}       - delete
+ * Baileys Service (Native Integration)
+ * Replaces Evolution API v2
  */
-
-// Global polling tracker to prevent multiple intervals for the same session
-const activePolls = {};
-
-function stopPolling(sessionId) {
-    if (activePolls[sessionId]) {
-        console.log(`[EVO v1] Stopping existing poll for ${sessionId}`);
-        clearInterval(activePolls[sessionId]);
-        delete activePolls[sessionId];
-    }
-}
 
 async function createInstance(sessionId, userId, io, pairingNumber = null) {
     try {
-        console.log(`[EVO v2] Starting fresh for ${sessionId} | pairing=${pairingNumber}`);
+        console.log(`[Baileys] Starting session ${sessionId} for user ${userId} | pairing=${pairingNumber}`);
         
-        // 1. Force cleanup of any existing polling loop
-        stopPolling(sessionId);
+        const sessionDir = path.join(__dirname, '..', 'sessions', sessionId);
+        const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
+        const { version, isLatest } = await fetchLatestBaileysVersion();
+        
+        console.log(`[Baileys] Using v${version.join('.')}, isLatest: ${isLatest}`);
 
-        // 2. Proactive Clean Slate
-        console.log(`[EVO v2] Force cleanup for ${sessionId}...`);
-        try {
-            await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
-            await new Promise(r => setTimeout(r, 500));
-        } catch (e) {}
+        // Handle existing session
+        if (sessions.has(sessionId)) {
+            try { sessions.get(sessionId).logout(); } catch(e) {}
+            sessions.delete(sessionId);
+        }
 
-        // 3. Create fresh instance with v2 payload (with retry for ECONNREFUSED)
-        let createSuccess = false;
-        const createPayload = {
-            instanceName: sessionId,
-            token: EVO_KEY,
-            integration: 'WHATSAPP-BAILEYS',
-            alwaysOnline: true
-        };
+        const sock = makeWASocket({
+            version,
+            logger,
+            printQRInTerminal: false,
+            auth: {
+                creds: state.creds,
+                keys: makeCacheableSignalKeyStore(state.keys, logger),
+            },
+            browser: ["Setorwa", "Chrome", "1.0.0"],
+            getMessage: async (key) => { return { conversation: 'hello' } } // Basic placeholder
+        });
 
-        let createAttempts = 0;
-        while (createAttempts < 5 && !createSuccess) {
-            createAttempts++;
-            try {
-                await axios.post(`${EVO_URL}/instance/create`, createPayload, { 
-                    headers: { 'apikey': EVO_KEY } 
+        sessions.set(sessionId, sock);
+
+        // Handle pairing code
+        if (pairingNumber && !sock.authState.creds.registered) {
+            console.log(`[Baileys] Requesting pairing code for ${pairingNumber}`);
+            setTimeout(async () => {
+                try {
+                    let number = pairingNumber.replace(/[^0-9]/g, '');
+                    if (!number.startsWith('62') && number.startsWith('0')) {
+                        number = '62' + number.slice(1);
+                    }
+                    const code = await sock.requestPairingCode(number);
+                    console.log(`[Baileys] Pairing code received: ${code}`);
+                    if (io) io.to(userId).emit("pairing_code", code);
+                } catch (e) {
+                    console.error("[Baileys] Pairing code error:", e.message);
+                }
+            }, 3000); // Small delay to ensure socket is ready
+        }
+
+        sock.ev.on('connection.update', (update) => {
+            const { connection, lastDisconnect, qr } = update;
+
+            if (qr) {
+                console.log(`[Baileys] QR code received for ${sessionId}`);
+                // Baileys provides the raw string, we might need to convert it to base64 for the frontend if it expects that
+                // Or just emit the string and let the frontend handle it with a library like 'qrcode'
+                // The existing frontend likely expects a base64 image (based on waService.js line 120)
+                const QRCode = require('qrcode');
+                QRCode.toDataURL(qr, (err, url) => {
+                    if (!err && io) {
+                        io.to(userId).emit("qr", url);
+                    }
                 });
-                createSuccess = true;
-                console.log(`[EVO v2] Instance created: ${sessionId}`);
-            } catch (e) {
-                const errorMsg = e.response?.data?.message?.[0] || e.message;
-                if (errorMsg === "Instance already exists") {
-                    createSuccess = true;
-                    console.log(`[EVO v2] Instance ready (existing): ${sessionId}`);
-                } else if (e.code === 'ECONNREFUSED' || e.code === 'ENOTFOUND') {
-                    console.log(`[EVO v2] Connection to Evolution failed (Attempt ${createAttempts}), retrying in 2s...`);
-                    await new Promise(r => setTimeout(r, 2000));
+            }
+
+            if (connection === 'close') {
+                const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
+                console.log(`[Baileys] Connection closed for ${sessionId}. Reason: ${lastDisconnect.error}. Reconnecting: ${shouldReconnect}`);
+                
+                if (shouldReconnect) {
+                    createInstance(sessionId, userId, io, pairingNumber);
                 } else {
-                    console.log(`[EVO v2] Create fail (Attempt ${createAttempts}):`, errorMsg);
-                    await new Promise(r => setTimeout(r, 1000));
+                    console.log(`[Baileys] Session ${sessionId} logged out.`);
+                    sessions.delete(sessionId);
+                    if (io) io.to(userId).emit("status", "disconnected");
+                    // Cleanup session folder
+                    fs.rmSync(sessionDir, { recursive: true, force: true });
+                }
+            } else if (connection === 'open') {
+                console.log(`[Baileys] Connection opened for ${sessionId}`);
+                if (io) {
+                    io.to(userId).emit("status", "connected");
+                    io.to(userId).emit("wa_list_update");
                 }
             }
-        }
+        });
 
-        if (!createSuccess) throw new Error("Gagal membuat instance setelah beberapa percobaan.");
-
-        if (pairingNumber) {
-            // PAIRING CODE MODE - v2 uses GET /instance/connect/{id}?number={num}
-            console.log(`[EVO v2] Requesting pairing code for ${pairingNumber}...`);
-            let pairAttempts = 0;
-            activePolls[sessionId] = setInterval(async () => {
-                pairAttempts++;
-                try {
-                    // v2.1.2 official pairing endpoint is POST
-                    const pairRes = await axios.post(
-                        `${EVO_URL}/instance/connect/pairing/${sessionId}`,
-                        { number: String(pairingNumber) },
-                        { headers: { 'apikey': EVO_KEY } }
-                    );
-                    
-                    console.log(`[EVO v2] Pairing Res [Attempt ${pairAttempts}]:`, pairRes.data);
-
-                    const code = pairRes.data?.code || 
-                                 pairRes.data?.pairingCode || 
-                                 pairRes.data?.instance?.pairingCode ||
-                                 pairRes.data?.hash || // Alternative for some v2 builds
-                                 (pairRes.data?.pairingCode ? pairRes.data.pairingCode : null);
-
-                    if (code && typeof code === 'string' && code.length >= 6) {
-                        console.log(`[EVO v2] DETECTED Pairing code: ${code}`);
-                        if (io) io.to(userId).emit("pairing_code", code);
-                        stopPolling(sessionId);
-                    }
-                } catch (e) {
-                    console.log(`[EVO v2] Pairing attempt ${pairAttempts} error:`, e.response?.data?.message?.[0] || e.message);
-                    if (pairAttempts >= 30) stopPolling(sessionId);
-                }
-            }, 2000);
-
-        } else {
-            // QR CODE MODE
-            let qrAttempts = 0;
-            activePolls[sessionId] = setInterval(async () => {
-                qrAttempts++;
-                try {
-                    const connectRes = await axios.get(`${EVO_URL}/instance/connect/${sessionId}`, {
-                        headers: { 'apikey': EVO_KEY }
-                    });
-                    
-                    const qrBase64 = connectRes.data?.base64;
-                    if (qrBase64) {
-                        if (io) io.to(userId).emit("qr", qrBase64);
-                    }
-
-                    // Check if open
-                    const stateRes = await axios.get(`${EVO_URL}/instance/connectionState/${sessionId}`, {
-                        headers: { 'apikey': EVO_KEY }
-                    });
-                    if (stateRes.data?.instance?.state === 'open') {
-                        stopPolling(sessionId);
-                        if (io) io.to(userId).emit("status", "connected");
-                        if (io) io.to(userId).emit("wa_list_update");
-                    }
-                } catch (e) {
-                    const status = e.response?.status;
-                    const errorMsg = e.response?.data?.message?.[0] || e.message;
-                    console.log(`[EVO v2] QR attempt ${qrAttempts} error [${status}]:`, errorMsg);
-                    
-                    // If 404, the instance might have been deleted or integration not ready
-                    if (status === 404 && qrAttempts > 10) {
-                        console.log(`[EVO v2] Instance missing during polling. Stopping.`);
-                        stopPolling(sessionId);
-                    }
-                    if (qrAttempts >= 60) stopPolling(sessionId);
-                }
-            }, 1000); // Super fast QR polling
-        }
+        sock.ev.on('creds.update', saveCreds);
 
         return { success: true };
     } catch (error) {
-        console.error('[EVO v2] Critical Error:', error.message);
+        console.error('[Baileys] Critical Error:', error.message);
         return { success: false, error: error.message };
     }
 }
 
 async function getWaList(userId) {
     const sessionId = `session_${userId}`;
-    try {
-        const res = await axios.get(`${EVO_URL}/instance/connectionState/${sessionId}`, {
-            headers: { 'apikey': EVO_KEY }
-        });
-
-        if (res.data && res.data.instance) {
-            return [{
-                sessionId,
-                phone: res.data.instance.owner || 'WhatsApp',
-                status: res.data.instance.state === 'open' ? 'connected' : 'disconnected'
-            }];
-        }
-        return [];
-    } catch (e) {
-        return [];
+    const sock = sessions.get(sessionId);
+    if (sock && sock.user) {
+        return [{
+            sessionId,
+            phone: jidNormalizedUser(sock.user.id).split('@')[0],
+            status: 'connected'
+        }];
     }
+    
+    // Check if session folder exists
+    const sessionDir = path.join(__dirname, '..', 'sessions', sessionId);
+    if (fs.existsSync(sessionDir)) {
+        return [{
+            sessionId,
+            phone: 'WhatsApp',
+            status: 'disconnected'
+        }];
+    }
+    
+    return [];
 }
 
 async function disconnectSession(sessionId) {
     try {
-        try {
-            await axios.delete(`${EVO_URL}/instance/logout/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
-        } catch (e) {}
-        await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
+        const sock = sessions.get(sessionId);
+        if (sock) {
+            await sock.logout();
+            sessions.delete(sessionId);
+        }
+        const sessionDir = path.join(__dirname, '..', 'sessions', sessionId);
+        if (fs.existsSync(sessionDir)) {
+            fs.rmSync(sessionDir, { recursive: true, force: true });
+        }
         return { success: true };
     } catch (error) {
-        console.error('[EVO v2] Disconnect Error:', error.message);
+        console.error('[Baileys] Disconnect Error:', error.message);
         return { success: false, error: error.message };
     }
 }
 
 async function checkIsOnWhatsApp(userId, number) {
     const sessionId = `session_${userId}`;
+    const sock = sessions.get(sessionId);
+    if (!sock) return null;
+
     try {
-        const res = await axios.post(`${EVO_URL}/chat/whatsappNumbers/${sessionId}`, 
-            { numbers: [String(number)] },
-            { headers: { 'apikey': EVO_KEY } }
-        );
-        // Evolution returns [{ number: '...', exists: true }]
-        return res.data?.[0]?.exists || false;
+        let jid = number.replace(/[^0-9]/g, '');
+        if (!jid.includes('@')) jid = jid + '@s.whatsapp.net';
+        
+        const [result] = await sock.onWhatsApp(jid);
+        return result?.exists || false;
     } catch (e) {
-        console.error(`[EVO v2] Check WA Error for ${number}:`, e.message);
-        return null; // Return null to indicate error/uncertainty
+        console.error(`[Baileys] Check WA Error for ${number}:`, e.message);
+        return null;
     }
 }
 
 function getSession(sessionId) {
-    // Legacy support for adminRouter: Evolution API doesn't expose raw "sock" objects,
-    // so we return a placeholder that evaluates to truthy if we want to allow sending.
-    // adminRouter uses this to check 'if (sock)'.
-    return { id: sessionId, evolution: true };
+    return sessions.get(sessionId);
 }
 
 async function getUserSessionDetails(userId) {
@@ -213,54 +186,52 @@ async function getUserSessionDetails(userId) {
     return list[0] || null;
 }
 
-/**
- * Get all connected sessions across all instances in Evolution API
- */
 async function _getConnectedSessions() {
-    try {
-        const res = await axios.get(`${EVO_URL}/instance/fetchInstances`, {
-            headers: { 'apikey': EVO_KEY }
-        });
-        const all = res.data || [];
-        return all
-            .filter(inst => inst.instance.state === 'open')
-            .map(inst => ({
-                id: inst.instance.instanceName,
-                phone: inst.instance.owner || 'WhatsApp',
+    const connected = [];
+    for (const [id, sock] of sessions.entries()) {
+        if (sock.user) {
+            connected.push({
+                id,
+                phone: jidNormalizedUser(sock.user.id).split('@')[0],
                 status: 'connected'
-            }));
-    } catch (e) {
-        return [];
+            });
+        }
     }
+    return connected;
 }
 
 async function sendMessage(sessionId, to, message, mediaUrl = null) {
-    try {
-        let endpoint = `${EVO_URL}/message/sendText/${sessionId}`;
-        let payload = {
-            number: to,
-            options: { delay: 1200, presence: "composing" },
-            textMessage: { text: message }
-        };
+    let sock = sessions.get(sessionId);
+    
+    // If not in memory but session exists on disk, try to recover
+    if (!sock) {
+        const userId = sessionId.replace('session_', '');
+        // In a real app, we'd need 'io' here for recovery. 
+        // For simplicity, we assume server.js auto-reconnects.
+        throw new Error("Session not active. Please reconnect.");
+    }
 
+    try {
+        let jid = to.replace(/[^0-9]/g, '');
+        if (!jid.includes('@')) jid = jid + '@s.whatsapp.net';
+
+        let result;
         if (mediaUrl) {
-            endpoint = `${EVO_URL}/message/sendMedia/${sessionId}`;
-            payload = {
-                number: to,
-                mediaMessage: {
-                    mediatype: "image",
-                    caption: message,
-                    media: mediaUrl
-                }
-            };
+            result = await sock.sendMessage(jid, {
+                image: { url: mediaUrl },
+                caption: message
+            });
+        } else {
+            result = await sock.sendMessage(jid, { text: message });
         }
 
-        const res = await axios.post(endpoint, payload, {
-            headers: { 'apikey': EVO_KEY }
-        });
-        return res.data;
+        return { 
+            status: 'sent', 
+            id: result.key.id, 
+            phone: jidNormalizedUser(sock.user.id).split('@')[0] 
+        };
     } catch (error) {
-        console.error(`[EVO v2] Failed to send to ${to}:`, error.response?.data || error.message);
+        console.error(`[Baileys] Failed to send to ${to}:`, error.message);
         throw error;
     }
 }

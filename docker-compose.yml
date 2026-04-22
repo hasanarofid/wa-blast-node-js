@@ -38,7 +38,8 @@ services:
       - QRCODE_COLOR=#198754
       - CONFIG_SESSION_PHONE_CLIENT=SetorwaApp
       - CONFIG_SESSION_PHONE_NAME=Chrome
-      - CONFIG_SESSION_PHONE_VERSION=2.3000.1025062854
+      - LOG_LEVEL=debug
+      - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true
       - DATABASE_ENABLED=true
       - DATABASE_PROVIDER=postgresql
       - DATABASE_CONNECTION_URI=postgresql://evolution:evolution@postgres:5432/evolution?schema=public

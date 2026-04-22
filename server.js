@@ -725,7 +725,7 @@ server.listen(PORT, () => {
         for (const sessionId of folders) {
             let userId = sessionId;
             if (sessionId.includes('_')) {
-                userId = sessionId.split('_')[0];
+                userId = sessionId.split('_')[1];
             }
             console.log(`Auto-reconnecting session ${sessionId} for ${userId}`);
             createInstance(sessionId, userId, io).catch(err => console.error("Reconnect failed for", sessionId, err));
