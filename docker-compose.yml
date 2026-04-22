@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=evolution
+      - POSTGRES_PASSWORD=evolution
+      - POSTGRES_DB=evolution
+    networks:
+      - setorwa-network
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
   redis:
     image: redis:alpine
     container_name: redis
@@ -26,10 +39,12 @@ services:
       - CONFIG_SESSION_PHONE_CLIENT=SetorwaApp
       - CONFIG_SESSION_PHONE_NAME=Chrome
       - CONFIG_SESSION_PHONE_VERSION=2.3000.1025062854
-      - DATABASE_ENABLED=false
+      - DATABASE_ENABLED=true
       - DATABASE_PROVIDER=postgresql
+      - DATABASE_CONNECTION_URI=postgresql://evolution:evolution@postgres:5432/evolution?schema=public
     depends_on:
       - redis
+      - postgres
     networks:
       - setorwa-network
 
