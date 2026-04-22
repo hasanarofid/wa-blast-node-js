@@ -28,16 +28,28 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         console.log(`[Baileys] Starting session ${sessionId} for user ${userId} | pairing=${pairingNumber}`);
         
         const sessionDir = path.join(__dirname, '..', 'sessions', sessionId);
-        const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
-        const { version, isLatest } = await fetchLatestBaileysVersion();
         
-        console.log(`[Baileys] Using v${version.join('.')}, isLatest: ${isLatest}`);
-
-        // Handle existing session
+        // Handle existing session in memory
         if (sessions.has(sessionId)) {
-            try { sessions.get(sessionId).logout(); } catch(e) {}
+            console.log(`[Baileys] Closing existing in-memory session for ${sessionId}`);
+            try { 
+                const oldSock = sessions.get(sessionId);
+                oldSock.ev.removeAllListeners();
+                oldSock.logout(); 
+            } catch(e) {}
             sessions.delete(sessionId);
         }
+
+        // Proactive cleanup if we are starting a fresh connection request (pairing or QR)
+        // and we don't have a valid registered session
+        const { state: tempState } = await useMultiFileAuthState(sessionDir);
+        if (!tempState.creds.registered) {
+            console.log(`[Baileys] Cleaning up unregistered session directory for ${sessionId}`);
+            fs.rmSync(sessionDir, { recursive: true, force: true });
+        }
+
+        const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
+        const { version, isLatest } = await fetchLatestBaileysVersion();
 
         const sock = makeWASocket({
             version,
@@ -75,16 +87,18 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
             const { connection, lastDisconnect, qr } = update;
 
             if (qr) {
-                console.log(`[Baileys] QR code received for ${sessionId}`);
-                // Baileys provides the raw string, we might need to convert it to base64 for the frontend if it expects that
-                // Or just emit the string and let the frontend handle it with a library like 'qrcode'
-                // The existing frontend likely expects a base64 image (based on waService.js line 120)
-                const QRCode = require('qrcode');
-                QRCode.toDataURL(qr, (err, url) => {
-                    if (!err && io) {
-                        io.to(userId).emit("qr", url);
-                    }
-                });
+                // Only emit QR if NOT in pairing mode to avoid confusion
+                if (!pairingNumber) {
+                    console.log(`[Baileys] QR code received for ${sessionId}`);
+                    const QRCode = require('qrcode');
+                    QRCode.toDataURL(qr, (err, url) => {
+                        if (!err && io) {
+                            io.to(userId).emit("qr", url);
+                        }
+                    });
+                } else {
+                    console.log(`[Baileys] QR received but suppressed (Pairing mode active) for ${sessionId}`);
+                }
             }
 
             if (connection === 'close') {
