@@ -86,8 +86,16 @@ async function createInstance(sessionId, userId, io, pairingNumber = null, isRec
             }, 3000);
         }
 
+        sock.ev.on('creds.update', () => {
+            console.log(`[Baileys] Credentials updated for ${sessionId}`);
+            saveCreds();
+        });
+
         sock.ev.on('connection.update', (update) => {
-            const { connection, lastDisconnect, qr } = update;
+            const { connection, lastDisconnect, qr, isNewLogin } = update;
+            
+            // Debug all updates
+            if (!qr) console.log(`[Baileys] Connection Update [${sessionId}]:`, JSON.stringify(update));
 
             if (qr && !pairingNumber) {
                 const QRCode = require('qrcode');
@@ -111,15 +119,13 @@ async function createInstance(sessionId, userId, io, pairingNumber = null, isRec
                     fs.rmSync(sessionDir, { recursive: true, force: true });
                 }
             } else if (connection === 'open') {
-                console.log(`[Baileys] Connection opened for ${sessionId}`);
+                console.log(`[Baileys] Connection OPENED for ${sessionId}. New Login: ${isNewLogin}`);
                 if (io) {
                     io.to(userId).emit("status", "connected");
                     io.to(userId).emit("wa_list_update");
                 }
             }
         });
-
-        sock.ev.on('creds.update', saveCreds);
 
         return { success: true };
     } catch (error) {
