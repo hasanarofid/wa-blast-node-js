@@ -23,9 +23,9 @@ const qrCodes = new Map();
  * Replaces Evolution API v2
  */
 
-async function createInstance(sessionId, userId, io, pairingNumber = null) {
+async function createInstance(sessionId, userId, io, pairingNumber = null, isReconnect = false) {
     try {
-        console.log(`[Baileys] Starting session ${sessionId} for user ${userId} | pairing=${pairingNumber}`);
+        console.log(`[Baileys] Starting session ${sessionId} | pairing=${pairingNumber} | isReconnect=${isReconnect}`);
         
         const sessionDir = path.join(__dirname, '..', 'sessions', sessionId);
         
@@ -35,21 +35,23 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
             try { 
                 const oldSock = sessions.get(sessionId);
                 oldSock.ev.removeAllListeners();
-                oldSock.logout(); 
+                // Instead of logout (which might kill the session), we just end the connection
+                oldSock.end(); 
             } catch(e) {}
             sessions.delete(sessionId);
         }
 
-        // Proactive cleanup if we are starting a fresh connection request (pairing or QR)
-        // and we don't have a valid registered session
-        const { state: tempState } = await useMultiFileAuthState(sessionDir);
-        if (!tempState.creds.registered) {
-            console.log(`[Baileys] Cleaning up unregistered session directory for ${sessionId}`);
-            fs.rmSync(sessionDir, { recursive: true, force: true });
+        // Proactive cleanup ONLY if it's NOT a reconnect and it's NOT registered
+        if (!isReconnect) {
+            const { state: tempState } = await useMultiFileAuthState(sessionDir);
+            if (!tempState.creds.registered) {
+                console.log(`[Baileys] Cleaning up unregistered session directory for ${sessionId}`);
+                fs.rmSync(sessionDir, { recursive: true, force: true });
+            }
         }
 
         const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
-        const { version, isLatest } = await fetchLatestBaileysVersion();
+        const { version } = await fetchLatestBaileysVersion();
 
         const sock = makeWASocket({
             version,
@@ -59,14 +61,14 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                 creds: state.creds,
                 keys: makeCacheableSignalKeyStore(state.keys, logger),
             },
-            browser: ["Setorwa", "Chrome", "1.0.0"],
-            getMessage: async (key) => { return { conversation: 'hello' } } // Basic placeholder
+            browser: ["Ubuntu", "Chrome", "20.0.04"],
+            getMessage: async (key) => { return { conversation: 'hello' } }
         });
 
         sessions.set(sessionId, sock);
 
-        // Handle pairing code
-        if (pairingNumber && !sock.authState.creds.registered) {
+        // Handle pairing code ONLY if NOT a reconnect
+        if (pairingNumber && !sock.authState.creds.registered && !isReconnect) {
             console.log(`[Baileys] Requesting pairing code for ${pairingNumber}`);
             setTimeout(async () => {
                 try {
@@ -75,43 +77,37 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                         number = '62' + number.slice(1);
                     }
                     const code = await sock.requestPairingCode(number);
-                    console.log(`[Baileys] Pairing code received: ${code}`);
+                    console.log(`[Baileys] Pairing code successfully generated: ${code}`);
                     if (io) io.to(userId).emit("pairing_code", code);
                 } catch (e) {
                     console.error("[Baileys] Pairing code error:", e.message);
+                    if (io) io.to(userId).emit("error", "Gagal meminta kode pairing. Silakan coba lagi.");
                 }
-            }, 3000); // Small delay to ensure socket is ready
+            }, 3000);
         }
 
         sock.ev.on('connection.update', (update) => {
             const { connection, lastDisconnect, qr } = update;
 
-            if (qr) {
-                // Only emit QR if NOT in pairing mode to avoid confusion
-                if (!pairingNumber) {
-                    console.log(`[Baileys] QR code received for ${sessionId}`);
-                    const QRCode = require('qrcode');
-                    QRCode.toDataURL(qr, (err, url) => {
-                        if (!err && io) {
-                            io.to(userId).emit("qr", url);
-                        }
-                    });
-                } else {
-                    console.log(`[Baileys] QR received but suppressed (Pairing mode active) for ${sessionId}`);
-                }
+            if (qr && !pairingNumber) {
+                const QRCode = require('qrcode');
+                QRCode.toDataURL(qr, (err, url) => {
+                    if (!err && io) io.to(userId).emit("qr", url);
+                });
             }
 
             if (connection === 'close') {
-                const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-                console.log(`[Baileys] Connection closed for ${sessionId}. Reason: ${lastDisconnect.error}. Reconnecting: ${shouldReconnect}`);
+                const statusCode = (lastDisconnect.error)?.output?.statusCode;
+                const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
+                
+                console.log(`[Baileys] Connection closed for ${sessionId}. Status: ${statusCode}. Reconnecting: ${shouldReconnect}`);
                 
                 if (shouldReconnect) {
-                    createInstance(sessionId, userId, io, pairingNumber);
+                    createInstance(sessionId, userId, io, pairingNumber, true);
                 } else {
-                    console.log(`[Baileys] Session ${sessionId} logged out.`);
+                    console.log(`[Baileys] Session ${sessionId} logged out or terminated.`);
                     sessions.delete(sessionId);
                     if (io) io.to(userId).emit("status", "disconnected");
-                    // Cleanup session folder
                     fs.rmSync(sessionDir, { recursive: true, force: true });
                 }
             } else if (connection === 'open') {
