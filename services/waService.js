@@ -60,8 +60,8 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         if (!createSuccess) throw new Error("Gagal membuat instance.");
 
         console.log(`[EVO v2] Instance ready: ${sessionId}`);
-        // Ultra-fast wait for v2
-        await new Promise(r => setTimeout(r, 1000));
+        // Increased wait for v2 to stabilize integration
+        await new Promise(r => setTimeout(r, 2500));
 
         if (pairingNumber) {
             // PAIRING CODE MODE - v2 uses GET /instance/connect/{id}?number={num}
@@ -77,11 +77,13 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                         { headers: { 'apikey': EVO_KEY } }
                     );
                     
-                    console.log(`[EVO v2] Pairing Res [Attempt ${pairAttempts}]:`, JSON.stringify(pairRes.data));
+                    console.log(`[EVO v2] Pairing Res [Attempt ${pairAttempts}]:`, pairRes.data);
 
                     const code = pairRes.data?.code || 
                                  pairRes.data?.pairingCode || 
-                                 pairRes.data?.instance?.pairingCode;
+                                 pairRes.data?.instance?.pairingCode ||
+                                 pairRes.data?.hash || // Alternative for some v2 builds
+                                 (pairRes.data?.pairingCode ? pairRes.data.pairingCode : null);
 
                     if (code && typeof code === 'string' && code.length >= 6) {
                         console.log(`[EVO v2] DETECTED Pairing code: ${code}`);
@@ -119,8 +121,16 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                         if (io) io.to(userId).emit("wa_list_update");
                     }
                 } catch (e) {
-                    console.log(`[EVO v2] QR attempt ${qrAttempts} error:`, e.message);
-                    if (qrAttempts >= 40) stopPolling(sessionId);
+                    const status = e.response?.status;
+                    const errorMsg = e.response?.data?.message?.[0] || e.message;
+                    console.log(`[EVO v2] QR attempt ${qrAttempts} error [${status}]:`, errorMsg);
+                    
+                    // If 404, the instance might have been deleted or integration not ready
+                    if (status === 404 && qrAttempts > 10) {
+                        console.log(`[EVO v2] Instance missing during polling. Stopping.`);
+                        stopPolling(sessionId);
+                    }
+                    if (qrAttempts >= 60) stopPolling(sessionId);
                 }
             }, 1000); // Super fast QR polling
         }
