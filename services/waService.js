@@ -19,7 +19,7 @@ const activePolls = {};
 
 function stopPolling(sessionId) {
     if (activePolls[sessionId]) {
-        console.log(`[EVO v2] Stopping existing poll for ${sessionId}`);
+        console.log(`[EVO v1] Stopping existing poll for ${sessionId}`);
         clearInterval(activePolls[sessionId]);
         delete activePolls[sessionId];
     }
@@ -34,22 +34,19 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
 
         // 2. Proactive Clean Slate
         console.log(`[EVO v2] Force cleanup for ${sessionId}...`);
-        // 3. Create fresh instance - Mirroring masterwa payload
+        try {
+            await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
+            await new Promise(r => setTimeout(r, 500));
+        } catch (e) {}
+
+        // 3. Create fresh instance with v2 payload
         let createSuccess = false;
         const createPayload = {
             instanceName: sessionId,
             token: EVO_KEY,
             integration: 'WHATSAPP-BAILEYS',
-            alwaysOnline: true,
-            qrcode: true
+            alwaysOnline: true
         };
-
-        if (pairingNumber) {
-            let phone = String(pairingNumber);
-            if (phone.startsWith('0')) phone = '62' + phone.slice(1);
-            if (!phone.startsWith('62')) phone = '62' + phone;
-            createPayload.number = phone;
-        }
 
         try {
             await axios.post(`${EVO_URL}/instance/create`, createPayload, { 
@@ -63,22 +60,24 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
         if (!createSuccess) throw new Error("Gagal membuat instance.");
 
         console.log(`[EVO v2] Instance ready: ${sessionId}`);
-        // 🔥 MASTERWA MIRROR: WAIT 5 SECONDS FOR STABILITY
-        await new Promise(r => setTimeout(r, 5000));
+        // Ultra-fast wait for v2
+        await new Promise(r => setTimeout(r, 1000));
 
         if (pairingNumber) {
-            // PAIRING CODE MODE - masterwa uses /instance/connect directly
-            console.log(`[EVO v2] Requesting pairing code (Masterwa Style)...`);
+            // PAIRING CODE MODE - v2 uses GET /instance/connect/{id}?number={num}
+            console.log(`[EVO v2] Requesting pairing code for ${pairingNumber}...`);
             let pairAttempts = 0;
             activePolls[sessionId] = setInterval(async () => {
                 pairAttempts++;
                 try {
-                    const pairRes = await axios.get(
-                        `${EVO_URL}/instance/connect/${sessionId}`,
+                    // v2.1.2 official pairing endpoint is POST
+                    const pairRes = await axios.post(
+                        `${EVO_URL}/instance/connect/pairing/${sessionId}`,
+                        { number: String(pairingNumber) },
                         { headers: { 'apikey': EVO_KEY } }
                     );
                     
-                    console.log(`[EVO v2] Pairing Res:`, JSON.stringify(pairRes.data));
+                    console.log(`[EVO v2] Pairing Res [Attempt ${pairAttempts}]:`, JSON.stringify(pairRes.data));
 
                     const code = pairRes.data?.code || 
                                  pairRes.data?.pairingCode || 
@@ -90,7 +89,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                         stopPolling(sessionId);
                     }
                 } catch (e) {
-                    console.log(`[EVO v2] Pairing attempt ${pairAttempts} error:`, e.message);
+                    console.log(`[EVO v2] Pairing attempt ${pairAttempts} error:`, e.response?.data?.message?.[0] || e.message);
                     if (pairAttempts >= 30) stopPolling(sessionId);
                 }
             }, 2000);
@@ -123,7 +122,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                     console.log(`[EVO v2] QR attempt ${qrAttempts} error:`, e.message);
                     if (qrAttempts >= 40) stopPolling(sessionId);
                 }
-            }, 2000);
+            }, 1000); // Super fast QR polling
         }
 
         return { success: true };
@@ -163,6 +162,54 @@ async function disconnectSession(sessionId) {
     } catch (error) {
         console.error('[EVO v2] Disconnect Error:', error.message);
         return { success: false, error: error.message };
+    }
+}
+
+async function checkIsOnWhatsApp(userId, number) {
+    const sessionId = `session_${userId}`;
+    try {
+        const res = await axios.post(`${EVO_URL}/chat/whatsappNumbers/${sessionId}`, 
+            { numbers: [String(number)] },
+            { headers: { 'apikey': EVO_KEY } }
+        );
+        // Evolution returns [{ number: '...', exists: true }]
+        return res.data?.[0]?.exists || false;
+    } catch (e) {
+        console.error(`[EVO v2] Check WA Error for ${number}:`, e.message);
+        return null; // Return null to indicate error/uncertainty
+    }
+}
+
+function getSession(sessionId) {
+    // Legacy support for adminRouter: Evolution API doesn't expose raw "sock" objects,
+    // so we return a placeholder that evaluates to truthy if we want to allow sending.
+    // adminRouter uses this to check 'if (sock)'.
+    return { id: sessionId, evolution: true };
+}
+
+async function getUserSessionDetails(userId) {
+    const list = await getWaList(userId);
+    return list[0] || null;
+}
+
+/**
+ * Get all connected sessions across all instances in Evolution API
+ */
+async function _getConnectedSessions() {
+    try {
+        const res = await axios.get(`${EVO_URL}/instance/fetchInstances`, {
+            headers: { 'apikey': EVO_KEY }
+        });
+        const all = res.data || [];
+        return all
+            .filter(inst => inst.instance.state === 'open')
+            .map(inst => ({
+                id: inst.instance.instanceName,
+                phone: inst.instance.owner || 'WhatsApp',
+                status: 'connected'
+            }));
+    } catch (e) {
+        return [];
     }
 }
 
@@ -207,5 +254,9 @@ module.exports = {
     getWaList,
     disconnectSession,
     sendMessage,
-    isUserConnected
+    isUserConnected,
+    checkIsOnWhatsApp,
+    getSession,
+    getUserSessionDetails,
+    _getConnectedSessions
 };

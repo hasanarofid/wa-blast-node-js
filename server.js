@@ -3,7 +3,7 @@ const path = require('path');
 const http = require('http');
 const fs = require('fs');
 const socketIo = require('socket.io');
-const { createInstance, sendMessage, getSession, getLatestQr, forceNewQr } = require('./services/waService');
+const { createInstance, sendMessage, getWaList, isUserConnected, disconnectSession, checkIsOnWhatsApp } = require('./services/waService');
 const adminRouter = require('./adminRouter');
 const cron = require('node-cron');
 
@@ -23,7 +23,6 @@ io.on("connection", (socket) => {
 
         // If Baileys already generated a QR before this socket connected,
         socket.emit("wa_list_update");
-        const { isUserConnected } = require('./services/waService');
         if (await isUserConnected(userId)) {
             socket.emit("status", "connected");
         } else {
@@ -313,7 +312,6 @@ app.post('/connect', async (req, res) => {
     const sid = `session_${userId}`;
 
     try {
-        const { createInstance } = require('./services/waService');
         await createInstance(sid, userId, ioInstance, method === 'pairing' ? phone : null);
         res.json({ message: "Connecting via Evolution API...", sessionId: sid });
     } catch (err) {
@@ -325,7 +323,6 @@ app.post('/connect', async (req, res) => {
 app.get('/api/whatsapp/list', async (req, res) => {
     const { userId } = req.query;
     if (!userId) return res.status(400).json({ success: false, message: 'Username diperlukan' });
-    const { getWaList } = require('./services/waService');
     const list = await getWaList(userId);
     res.json({ success: true, data: list });
 });
@@ -333,7 +330,6 @@ app.get('/api/whatsapp/list', async (req, res) => {
 app.post('/api/whatsapp/disconnect', async (req, res) => {
     const { sessionId } = req.body;
     if (!sessionId) return res.status(400).json({ success: false, message: 'sessionId diperlukan' });
-    const { disconnectSession } = require('./services/waService');
     await disconnectSession(sessionId);
     res.json({ success: true, message: 'WhatsApp terputus' });
 });
@@ -352,7 +348,6 @@ app.post('/api/blast/start', async (req, res) => {
     const userId = req.body?.userId || "cobasaja";
     const mode   = req.body?.mode   || "medium";
     const blastDelay = BLAST_DELAYS[mode] ?? BLAST_DELAYS.medium;
-    const { isUserConnected } = require('./services/waService');
     if (!(await isUserConnected(userId))) {
         return res.status(400).json({ success: false, message: 'WhatsApp tidak terhubung' });
     }
@@ -423,8 +418,6 @@ app.post('/api/blast/start', async (req, res) => {
             if (num.startsWith('08')) num = '628' + num.slice(2);
 
             try {
-                const { checkIsOnWhatsApp, isUserConnected } = require('./services/waService');
-                
                 if (!isUserConnected(userId)) {
                     console.log(`[BLAST] User disconnected mid-blast. Auto-stopping.`);
                     blastState.stopped = true;
