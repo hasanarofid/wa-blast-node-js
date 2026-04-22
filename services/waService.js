@@ -39,7 +39,7 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
             await new Promise(r => setTimeout(r, 500));
         } catch (e) {}
 
-        // 3. Create fresh instance with v2 payload
+        // 3. Create fresh instance with v2 payload (with retry for ECONNREFUSED)
         let createSuccess = false;
         const createPayload = {
             instanceName: sessionId,
@@ -48,20 +48,31 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
             alwaysOnline: true
         };
 
-        try {
-            await axios.post(`${EVO_URL}/instance/create`, createPayload, { 
-                headers: { 'apikey': EVO_KEY } 
-            });
-            createSuccess = true;
-        } catch (e) {
-            console.log(`[EVO v2] Create fail:`, e.response?.data?.message?.[0] || e.message);
+        let createAttempts = 0;
+        while (createAttempts < 5 && !createSuccess) {
+            createAttempts++;
+            try {
+                await axios.post(`${EVO_URL}/instance/create`, createPayload, { 
+                    headers: { 'apikey': EVO_KEY } 
+                });
+                createSuccess = true;
+                console.log(`[EVO v2] Instance created: ${sessionId}`);
+            } catch (e) {
+                const errorMsg = e.response?.data?.message?.[0] || e.message;
+                if (errorMsg === "Instance already exists") {
+                    createSuccess = true;
+                    console.log(`[EVO v2] Instance ready (existing): ${sessionId}`);
+                } else if (e.code === 'ECONNREFUSED' || e.code === 'ENOTFOUND') {
+                    console.log(`[EVO v2] Connection to Evolution failed (Attempt ${createAttempts}), retrying in 2s...`);
+                    await new Promise(r => setTimeout(r, 2000));
+                } else {
+                    console.log(`[EVO v2] Create fail (Attempt ${createAttempts}):`, errorMsg);
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            }
         }
 
-        if (!createSuccess) throw new Error("Gagal membuat instance.");
-
-        console.log(`[EVO v2] Instance ready: ${sessionId}`);
-        // Increased wait for v2 to stabilize integration
-        await new Promise(r => setTimeout(r, 2500));
+        if (!createSuccess) throw new Error("Gagal membuat instance setelah beberapa percobaan.");
 
         if (pairingNumber) {
             // PAIRING CODE MODE - v2 uses GET /instance/connect/{id}?number={num}
