@@ -14,88 +14,67 @@ const EVO_KEY = process.env.EVO_KEY || 'setorwasecret123';
  *   DELETE /instance/delete/{id}       - delete
  */
 
-// Global polling tracker to prevent multiple intervals for the same session
-const activePolls = {};
-
-function stopPolling(sessionId) {
-    if (activePolls[sessionId]) {
-        console.log(`[EVO v1] Stopping existing poll for ${sessionId}`);
-        clearInterval(activePolls[sessionId]);
-        delete activePolls[sessionId];
-    }
-}
-
 async function createInstance(sessionId, userId, io, pairingNumber = null) {
     try {
-        console.log(`[EVO v1] Starting fresh for ${sessionId} | pairing=${pairingNumber}`);
+        console.log(`[EVO v2] Starting fresh for ${sessionId} | pairing=${pairingNumber}`);
         
         // 1. Force cleanup of any existing polling loop
         stopPolling(sessionId);
 
         // 2. Proactive Clean Slate
-        console.log(`[EVO v1] Force cleanup for ${sessionId}...`);
-        try {
-            await axios.delete(`${EVO_URL}/instance/logout/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
-            await new Promise(r => setTimeout(r, 1000));
-        } catch (e) {}
+        console.log(`[EVO v2] Force cleanup for ${sessionId}...`);
         try {
             await axios.delete(`${EVO_URL}/instance/delete/${sessionId}`, { headers: { 'apikey': EVO_KEY } });
-            await new Promise(r => setTimeout(r, 2000));
+            await new Promise(r => setTimeout(r, 1000));
         } catch (e) {}
 
-        // 3. Create fresh instance
+        // 3. Create fresh instance with v2 payload
         let createSuccess = false;
         const createPayload = {
             instanceName: sessionId,
             token: EVO_KEY,
-            alwaysOnline: true,
-            pairingCode: true
+            integration: 'WHATSAPP-BAILEYS',
+            alwaysOnline: true
         };
 
-        for (let i = 0; i < 3; i++) {
-            try {
-                await axios.post(`${EVO_URL}/instance/create`, createPayload, { 
-                    headers: { 'apikey': EVO_KEY } 
-                });
-                createSuccess = true;
-                break;
-            } catch (e) {
-                console.log(`[EVO v1] Create attempt ${i+1} fail:`, e.response?.data?.message?.[0] || e.message);
-                await new Promise(r => setTimeout(r, 2000));
-            }
+        try {
+            await axios.post(`${EVO_URL}/instance/create`, createPayload, { 
+                headers: { 'apikey': EVO_KEY } 
+            });
+            createSuccess = true;
+        } catch (e) {
+            console.log(`[EVO v2] Create fail:`, e.response?.data?.message?.[0] || e.message);
         }
 
         if (!createSuccess) throw new Error("Gagal membuat instance.");
 
-        console.log(`[EVO v1] Instance ready: ${sessionId}`);
-        // Speeed up wait to 2s
+        console.log(`[EVO v2] Instance ready: ${sessionId}`);
+        // Ultra-fast wait for v2
         await new Promise(r => setTimeout(r, 2000));
 
         if (pairingNumber) {
-            // PAIRING CODE MODE - v1.8.2 uses GET /instance/pairingCode/{id}?number={num}
-            console.log(`[EVO v1] Requesting pairing code for ${pairingNumber}...`);
+            // PAIRING CODE MODE - v2 uses GET /instance/connect/{id}?number={num}
+            console.log(`[EVO v2] Requesting pairing code for ${pairingNumber}...`);
             let pairAttempts = 0;
             activePolls[sessionId] = setInterval(async () => {
                 pairAttempts++;
                 try {
                     const pairRes = await axios.get(
-                        `${EVO_URL}/instance/pairingCode/${sessionId}?number=${String(pairingNumber)}`,
+                        `${EVO_URL}/instance/connect/${sessionId}?number=${String(pairingNumber)}`,
                         { headers: { 'apikey': EVO_KEY } }
                     );
                     
                     const code = pairRes.data?.code || pairRes.data?.pairingCode;
                     if (code && typeof code === 'string' && code.length >= 6) {
-                        console.log(`[EVO v1] Got pairing code: ${code}`);
+                        console.log(`[EVO v2] Got pairing code: ${code}`);
                         if (io) io.to(userId).emit("pairing_code", code);
                         stopPolling(sessionId);
                     }
                 } catch (e) {
-                    // Log error to see if it's still 404
-                    const errStatus = e.response?.status;
-                    console.log(`[EVO v1] Pairing attempt ${pairAttempts} error [${errStatus}]:`, e.response?.data?.message?.[0] || e.message);
+                    console.log(`[EVO v2] Pairing attempt ${pairAttempts} error:`, e.response?.data?.message?.[0] || e.message);
                     if (pairAttempts >= 30) stopPolling(sessionId);
                 }
-            }, 2500);
+            }, 2000);
 
         } else {
             // QR CODE MODE
@@ -122,15 +101,15 @@ async function createInstance(sessionId, userId, io, pairingNumber = null) {
                         if (io) io.to(userId).emit("wa_list_update");
                     }
                 } catch (e) {
-                    console.log(`[EVO v1] QR attempt ${qrAttempts} error:`, e.message);
+                    console.log(`[EVO v2] QR attempt ${qrAttempts} error:`, e.message);
                     if (qrAttempts >= 40) stopPolling(sessionId);
                 }
-            }, 2000);
+            }, 1000); // Super fast QR polling
         }
 
         return { success: true };
     } catch (error) {
-        console.error('[EVO v1] Critical Error:', error.message);
+        console.error('[EVO v2] Critical Error:', error.message);
         return { success: false, error: error.message };
     }
 }
