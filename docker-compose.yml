@@ -8,19 +8,6 @@ services:
     networks:
       - setorwa-network
 
-  postgres:
-    image: postgres:15-alpine
-    container_name: postgres
-    restart: always
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=evolution
-    volumes:
-      - ./postgres_data:/var/lib/postgresql/data
-    networks:
-      - setorwa-network
-
   evolution:
     image: evoapicloud/evolution-api:v2.2.3
     container_name: evolution
@@ -38,12 +25,11 @@ services:
       - QRCODE_COLOR=#198754
       - CONFIG_SESSION_PHONE_CLIENT=SetorwaApp
       - CONFIG_SESSION_PHONE_NAME=Chrome
+      - CONFIG_SESSION_PHONE_VERSION=2.3000.1025062854
       - DATABASE_ENABLED=false
       - DATABASE_PROVIDER=postgresql
-      - DATABASE_CONNECTION_URI=postgresql://root:root@postgres:5432/evolution?schema=public
     depends_on:
       - redis
-      - postgres
     networks:
       - setorwa-network
 
